@@ -16,7 +16,7 @@ except ImportError:
     exit(13)
 from logkonsult.model.alpm import Parser
 from logkonsult.model.store import MainModel
-import application
+import logkonsult.application
 
 LOG_FILE = "/var/log/pacman.log"
 

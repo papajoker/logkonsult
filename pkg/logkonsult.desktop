@@ -1,0 +1,10 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Name=logKonsult
+Comment=consult pacman logs
+Path=/home/patrick/workspace/python/QT6/pacman-logs/src/
+Exec=/home/patrick/workspace/python/QT6/pacman-logs/src/main.py
+Icon=/home/patrick/workspace/python/QT6/pacman-logs/src/logkonsult.svg
+Categories=Utilityty;
+Keywords=pacman;log;

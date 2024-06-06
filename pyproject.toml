@@ -1,0 +1,71 @@
+[project]
+requires-python = ">=3.12"
+name = "logKonsult"
+dynamic = ["version"]
+authors = [
+  {name = "papajoker"}
+]
+description = "pacman logs consult Qt gui"
+dependencies = [
+  "PySide6",
+]
+license = {text = "MIT License"}
+keywords = ["pacman", "log", "pyside"]
+
+[project.urls]
+Repository = "https://github.com/papajoke/logkonsult.git"
+
+[project.scripts]
+# https://setuptools.pypa.io/en/stable/userguide/entry_point.html
+logkonsult-gui = "logkonsult:main"
+
+
+[build-system]
+requires = ["setuptools >= 69.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+# https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#flat-layout
+include-package-data = true
+
+[tool.setuptools.packages.find]
+# https://setuptools.pypa.io/en/stable/userguide/datafiles.html
+include = ["logkonsult*"]
+exclude = ["test*"]
+namespaces = false
+
+
+[tool.setuptools.package-data]
+"logkonsult.assets" = ["*.svg"]
+
+#python -m build --wheel --no-isolation
+#python -m installer --destdir="$pkgdir" dist/*.whl
+
+
+
+[tool.black]
+line-length = 120
+
+[tool.pylint."messages control"]
+ignore = ["setup.py", "__init__.py"]
+
+[tool.isort]
+profile = "black"
+
+[tools.pyright]
+reportMissingTypeArgument = true  # Report generic classes used without type arguments
+strictListInference = true  # Use union types when inferring types of lists elements, instead of Any
+
+[tool.ruff]
+# https://docs.astral.sh/ruff/configuration/
+line-length = 120
+indent-width = 4
+extend-exclude = []
+cache-dir = "~/.cache/ruff"
+
+[language-server.ruff.config]
+lineLength = 120
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

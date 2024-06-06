@@ -17,7 +17,7 @@ from PySide6.QtGui import (
     QPalette,
     QPen,
 )
-from model.alpm import HEADERS, Verbs
+from logkonsult.model.alpm import HEADERS, Verbs
 
 
 

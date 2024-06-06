@@ -3,8 +3,7 @@
 Type=Application
 Name=logKonsult
 Comment=consult pacman logs
-Path=/home/patrick/workspace/python/QT6/pacman-logs/src/
-Exec=/home/patrick/workspace/python/QT6/pacman-logs/src/main.py
-Icon=/home/patrick/workspace/python/QT6/pacman-logs/src/logkonsult.svg
+Exec=/usr/bin/logkonsult-gui
+Icon=/usr/share/pixmaps/logkonsult.svg
 Categories=Utilityty;
 Keywords=pacman;log;

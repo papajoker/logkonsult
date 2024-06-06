@@ -1,8 +1,9 @@
 pkgname=logkonsult
 pkgver=0.0.1
 pkgrel=1
+arch=("x86_64")
 pkgdesc="pacman logs Qt6 gui"
-url="https://..."
+url="https://github.com/papajoker/logkonsult"
 
 depends=(
   python
@@ -11,9 +12,12 @@ depends=(
 makedepends=(
   python-build
   python-installer
+  python-wheel
 )
 
-source=("${pkgname}-${pkgver}-${pkgrel}.tar.gz::https://github.com/nicolargo/glances/archive/v${pkgver}.tar.gz")
+source=("${pkgname}-${pkgver}-${pkgrel}.tar.gz::https://github.com/papajoker/logkonsult/archive/refs/tags/v${pkgver}.tar.gz")
+sha256sums=('4993db2134799be3dbfc64369dc461cbbe26d08290f1c8f79d20c9cee0e87dbf')
+# makepkg -fs --skipchecksums
 
 build() {
   cd $pkgname-$pkgver
@@ -23,12 +27,12 @@ build() {
 package() {
   cd $pkgname-$pkgver
   python -m installer --destdir="$pkgdir" dist/*.whl
-  mv "${pkgdir}"/usr/bin/grammalecte-cli{.py,}
-  
-  install -vDm 644 {examples/example.toml,README.rst} -t "$pkgdir/usr/share/doc/$pkgname/"
-  install -vDm 644 examples/projects.toml -t "$pkgdir/etc/$pkgname/"
-  install -vDm 644 examples/systemd/*.{service,timer} -t "$pkgdir/usr/lib/systemd/system/"
-  install -vDm 644 examples/sysusers.d/*.conf -t "$pkgdir/usr/lib/sysusers.d/"
+  mkdir -p "$pkgdir/usr/share/applications"
+  mkdir -p "$pkgdir/usr/share/pixmaps"
+  install -Dm644 pkg/logkonsult.desktop "$pkgdir"/usr/share/applications/
+  local py_version=$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
+  py_path="/usr/lib/python$py_version/site-packages/$pkgname/assets/$pkgname.svg"
+  ln -s "$py_path" "$pkgdir/usr/share/pixmaps/"
 }
 
 

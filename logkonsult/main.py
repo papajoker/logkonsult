@@ -14,8 +14,8 @@ try:
 except ImportError:
     print("ERROR: install pyside 6 !")
     exit(13)
-from model.alpm import Parser
-from model.store import MainModel
+from logkonsult.alpm import Parser
+from logkonsult.model.store import MainModel
 import application
 
 LOG_FILE = "/var/log/pacman.log"

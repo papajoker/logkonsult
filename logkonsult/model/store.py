@@ -10,7 +10,7 @@ from PySide6.QtCore import (
 from PySide6.QtGui import (
     QColor
 )
-from model.alpm import HEADERS, Paclog, PaclogWarn
+from logkonsult.model.alpm import HEADERS, Paclog, PaclogWarn
 
 
 def _colors_generate(logs):

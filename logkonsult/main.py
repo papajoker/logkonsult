@@ -14,7 +14,7 @@ try:
 except ImportError:
     print("ERROR: install pyside 6 !")
     exit(13)
-from logkonsult.alpm import Parser
+from logkonsult.model.alpm import Parser
 from logkonsult.model.store import MainModel
 import application
 

@@ -1,5 +1,5 @@
 pkgname=logkonsult
-pkgver=0.0.1
+pkgver=0.0.3
 pkgrel=1
 arch=("x86_64")
 pkgdesc="pacman logs Qt6 gui"
@@ -16,8 +16,8 @@ makedepends=(
 )
 
 source=("${pkgname}-${pkgver}-${pkgrel}.tar.gz::https://github.com/papajoker/logkonsult/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('4993db2134799be3dbfc64369dc461cbbe26d08290f1c8f79d20c9cee0e87dbf')
-# makepkg -fs --skipchecksums
+sha256sums=('822c7c7d40196bbb26c36c74718a2c408c5543800e677aad463b474f8294a698')
+# makepkg -fsi --skipchecksums
 
 build() {
   cd $pkgname-$pkgver

@@ -16,7 +16,7 @@ except ImportError:
     exit(13)
 from logkonsult.model.alpm import Parser
 from logkonsult.model.store import MainModel
-import logkonsult.application
+from logkonsult.application import MainWindow
 
 LOG_FILE = "/var/log/pacman.log"
 
@@ -31,7 +31,7 @@ print(len(items))
 class ApplicationQt(QApplication):
     def __init__(self, args, datas: list):
         super().__init__(args)
-        self.window = application.MainWindow(MainModel(datas))
+        self.window = MainWindow(MainModel(datas))
         self.setWindowIcon(QIcon(str("logkonsult.svg")))
 
         locale = QLocale()

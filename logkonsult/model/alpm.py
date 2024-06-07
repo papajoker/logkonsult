@@ -1,6 +1,6 @@
-from collections import defaultdict 
+from collections import defaultdict
 import datetime
-from enum import Enum, StrEnum  # StrEnum
+from enum import Enum
 
 
 class Verbs(Enum):

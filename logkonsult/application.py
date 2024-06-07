@@ -26,9 +26,9 @@ from PySide6.QtGui import (
     QAction,
     QIcon,
 )
-from logkonsult.model.delegates import TableDelegate
-from logkonsult.model.alpm import HEADERS, TimerData
-from logkonsult.model.store import ToolProxyModel, MainProxyModel
+from .model.delegates import TableDelegate
+from .model.alpm import HEADERS, TimerData
+from .model.store import ToolProxyModel, MainProxyModel
 
 class MainWindow(QMainWindow):
     def __init__(self, model: QAbstractTableModel):

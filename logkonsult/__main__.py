@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from pathlib import Path
 import sys
 try:
     from PySide6.QtWidgets import QApplication
@@ -14,12 +15,11 @@ try:
 except ImportError:
     print("ERROR: install pyside 6 !")
     exit(13)
-from logkonsult.model.alpm import Parser
-from logkonsult.model.store import MainModel
-from logkonsult.application import MainWindow
+from .model.alpm import Parser
+from .model.store import MainModel
+from .application import MainWindow
 
 LOG_FILE = "/var/log/pacman.log"
-
 
 parser = Parser(LOG_FILE)
 items = [*parser.load()]
@@ -32,7 +32,7 @@ class ApplicationQt(QApplication):
     def __init__(self, args, datas: list):
         super().__init__(args)
         self.window = MainWindow(MainModel(datas))
-        self.setWindowIcon(QIcon(str("logkonsult.svg")))
+        self.setWindowIcon(QIcon(str(Path(__file__).parent / "assets/logkonsult.svg")))
 
         locale = QLocale()
         #print(locale.name(), locale.bcp47Name(), locale)

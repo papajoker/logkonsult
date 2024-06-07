@@ -16,7 +16,7 @@ makedepends=(
 )
 
 source=("${pkgname}-${pkgver}-${pkgrel}.tar.gz::https://github.com/papajoker/logkonsult/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('822c7c7d40196bbb26c36c74718a2c408c5543800e677aad463b474f8294a698')
+sha256sums=('e0738a7fdfedb64fd883d1b3556ee4f934288384141d365ebe02232501895786')
 # makepkg -fsi --skipchecksums
 
 build() {

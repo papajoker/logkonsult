@@ -95,18 +95,23 @@ class MainWindow(QMainWindow):
             self.filter.currentIndexChanged.connect(self.onFiltrerChange)
             toolbar.addWidget(self.filter)
 
-            toolbar.addSeparator()
             action = QAction(QIcon.fromTheme("warning"), "Warnings", self)
             action.triggered.connect(self.onSelectWarning)
             toolbar.addAction(action)
+            toolbar.addSeparator()
+            self.action_calendar = QAction(QIcon.fromTheme("calendar"), "Calendar", self)
+            self.action_calendar.setCheckable(True)
+            self.action_calendar.toggled.connect(self.onToggleCalendar)
+            toolbar.addAction(self.action_calendar)
             action = QAction(QIcon.fromTheme("exit"), self.tr("Exit"), self)
             action.triggered.connect(self.close)
             toolbar.addAction(action)
 
         layout.addWidget(self.table)
-        calendar = QCalendarWidget(self.centralWidget())
-        self.init_calendar(calendar)
-        layout.addWidget(calendar)
+        self.calendar = QCalendarWidget(self.centralWidget())
+        self.calendar.setVisible(False)
+        self.init_calendar(self.calendar)
+        layout.addWidget(self.calendar)
 
         self.onSelectWarning()
         self.init_status_bar()
@@ -152,14 +157,9 @@ class MainWindow(QMainWindow):
             #self.search.setToolTip(f"{sender.currentText()} filter")
             self.search.setPlaceholderText(f"{sender.currentText()} entry")
 
-    '''def onCurrentRowChanged(self, index):
-        """ lier le tableau au formulaire """
-        if isinstance(self.table.model(), QSortFilterProxyModel):
-            # convertir la ligne car on utilise un filtre
-            index = self.table.model().mapToSource(index)
-        self.statusBar().showMessage(f"ligne {index.row()}")
-        self.mapper.setCurrentModelIndex(index)   # sans filtre on pouvais connecter directement cette méthode !
-    '''
+    def onToggleCalendar(self, state:bool):
+        self.calendar.setVisible(state)
+        self.action_calendar.setToolTip( f"{'hide' if state else 'show'} calendar")
 
     def onSelectWarning(self):
         self.filter.setCurrentIndex(1)

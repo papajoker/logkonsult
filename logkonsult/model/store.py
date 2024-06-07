@@ -73,10 +73,6 @@ class MainModel(QAbstractTableModel):
         return None
         if orientation == Qt.Orientation.Vertical:
             return None
-        #    return f"{section + 1}"
-
-    #def onError(self, title, message):
-    #    self.error.emit(title, message)
 
     def get_headers(self):
         for i in range(self.columnCount(0)):
@@ -89,9 +85,6 @@ class MainModel(QAbstractTableModel):
     def get_pkgs_count(self):
         """ count packages """
         return len(set(i.package for i in self._data))
-
-    #def get_raw(self):
-    #    return self._data.sauvegarde()
 
 
 ############### GUI ###############
@@ -109,7 +102,7 @@ class MainProxyModel(QSortFilterProxyModel):
         self.invalidateFilter()
 
     def filterAcceptsRow(self, source_row, source_parent):
-        """filtre "manuel" sur plusieurs colonnes"""
+        """manual filter on some colums"""
         for column, regex in self.filters.items():
             if regex == "":
                 break
@@ -123,7 +116,7 @@ class MainProxyModel(QSortFilterProxyModel):
 
 
 class ToolProxyModel(QSortFilterProxyModel):
-    """utilitaire pour remplir petits widgets (combo, autocompletion, ...)"""
+    """tool to inject one colums in small widgets (combo, autocompletion, ...)"""
 
     def __init__(self, column: int = 0, duplicate=True, miniLong=3):
         super().__init__()
@@ -152,14 +145,14 @@ class ToolProxyModel(QSortFilterProxyModel):
         return result
 
     def filterAcceptsColumn(self, source_column: int, source_parent: QModelIndex) -> bool:
-        """on accepte qu'une seule colonne"""
+        """accept only one column"""
         if self.group:
             self.group.clear()
         return source_column == self.column
 
     @property
     def column(self):
-        """ne récupère que cette colonne du modèle"""
+        """get one column from model"""
         return self._column
 
     @column.setter
@@ -168,7 +161,7 @@ class ToolProxyModel(QSortFilterProxyModel):
         self._refresh()
 
     def _refresh(self):
-        """au changement des setters, actualiser vue"""
+        """setter changed : view refresh"""
         self.beginResetModel()
         self.layoutChanged.emit()
         self.endResetModel()

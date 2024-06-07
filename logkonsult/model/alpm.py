@@ -29,6 +29,12 @@ class Verbs(Enum):
 HEADERS = ("date", "action", "package", "version", "message")
 ICO_ACTIONS = ("⚠", ">", "<", "≫", "🗘")
 
+
+#TODO Qdate ? 
+# use Qdate in Paclog ? to test in new branch
+#   best for less conversions in view ?
+#   best for filter date by locale format 
+
 class Paclog:
     """
     entry in log file

@@ -155,9 +155,8 @@ class MainWindow(QMainWindow):
         self.action_calendar.setToolTip( f"{'hide' if state else 'show'} calendar")
 
     def onCalendarSelect(self, date: QDate, count: int):
-        print(date, count)
         msg = QLocale.system().toString(date, format=QLocale.FormatType.ShortFormat)
-        self.statusBar().showMessage(f"{msg} : {count} packages", 5000)
+        self.statusBar().showMessage(f"{msg} : {count} package{'s' if count > 1 else ''}", 5000)
 
     def onSelectWarning(self):
         self.filter.setCurrentIndex(1)
@@ -171,7 +170,6 @@ class MainWindow(QMainWindow):
         print(entry)
         if not os.path.exists("/usr/bin/kate"):
             return
-        print(f'kate "/var/log/pacman.log" --line {entry.line} ...')
         process = QProcess()
         process.startDetached("/usr/bin/kate", ["/var/log/pacman.log", "--line", f"{entry.line}"])
 

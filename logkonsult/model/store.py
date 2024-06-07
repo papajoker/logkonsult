@@ -4,6 +4,7 @@ from PySide6.QtCore import (
     Qt,
     QAbstractTableModel,
     QDateTime,
+    QLocale,
     QModelIndex,
     QSortFilterProxyModel,
 )
@@ -46,8 +47,8 @@ class MainModel(QAbstractTableModel):
             item = self._data[index.row()]
             msg = item.message if isinstance(item, PaclogWarn) else ""
             d = QDateTime.fromSecsSinceEpoch(round(item.date.timestamp()))
-            d.setTimeSpec(Qt.TimeSpec.LocalTime)
-            return f"{item.action.name}\t{item.package}\t{msg}\n\t - {d.toString()}\n\t - line {item.line:04}"
+            msg_date = QLocale.system().toString(d, format=QLocale.FormatType.LongFormat)
+            return f"{item.action.name}\t{item.package}\t{msg}\n\t - {msg_date}\n\t - line {item.line:04}"
 
     def flags(self, index):
         return Qt.ItemNeverHasChildren | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable

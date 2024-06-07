@@ -1,10 +1,8 @@
 import os
 from PySide6.QtWidgets import (
-    QCalendarWidget,
     QComboBox,
     QCompleter,
     QDialogButtonBox,
-    QFrame,
     QHeaderView,
     QLabel,
     QLineEdit,
@@ -19,25 +17,18 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import (
     Qt,
-    QAbstractTableModel,
     QDate,
+    QLocale,
     QProcess,
-    QSortFilterProxyModel,
 )
 from PySide6.QtGui import (
     QAction,
     QIcon,
 )
-from .model.delegates import TableDelegate
-from .model.alpm import HEADERS, TimerData
-from .model.store import MainModel, ToolProxyModel, MainProxyModel
-
-class VLine(QFrame):
-    # a simple VLine, like the one you get from designer
-    def __init__(self):
-        super(VLine, self).__init__()
-        self.setFrameShape(QFrame.Shape.VLine)
-        self.setFrameShadow(QFrame.Shadow.Sunken)
+from ..model.delegates import TableDelegate
+from ..model.alpm import HEADERS, TimerData
+from ..model.store import MainModel, ToolProxyModel, MainProxyModel
+from .widgets import VLine, CalendarWidget
 
 
 class MainWindow(QMainWindow):
@@ -108,9 +99,10 @@ class MainWindow(QMainWindow):
             toolbar.addAction(action)
 
         layout.addWidget(self.table)
-        self.calendar = QCalendarWidget(self.centralWidget())
+        self.calendar = CalendarWidget(TimerData(self.model._data), self.centralWidget())
         self.calendar.setVisible(False)
         self.init_calendar(self.calendar)
+        self.calendar.onSelected.connect(self.onCalendarSelect)
         layout.addWidget(self.calendar)
 
         self.onSelectWarning()
@@ -118,19 +110,20 @@ class MainWindow(QMainWindow):
 
     def init_status_bar(self):
         count = self.model.get_transactions()
-        self.statusBar().showMessage(f" {count} transactions")
-        self.statusBar().addPermanentWidget(VLine())
+        bar = self.statusBar()
+        bar.showMessage(f" {count} transactions")
+        bar.addPermanentWidget(VLine())
         status = QLabel(str(count))
         status.setToolTip("Transactions")
-        self.statusBar().addPermanentWidget(status)
-        self.statusBar().addPermanentWidget(VLine())
+        bar.addPermanentWidget(status)
+        bar.addPermanentWidget(VLine())
         status = QLabel(str(self.model.get_pkgs_count()))
         status.setToolTip("Packages")
-        self.statusBar().addPermanentWidget(status)
-        self.statusBar().addPermanentWidget(VLine())
+        bar.addPermanentWidget(status)
+        bar.addPermanentWidget(VLine())
         status = QLabel(str(self.model.days))
         status.setToolTip("Days")
-        self.statusBar().addPermanentWidget(status)
+        bar.addPermanentWidget(status)
 
     def init_calendar(self, calendar):
         times = TimerData(self.model._data)
@@ -160,6 +153,11 @@ class MainWindow(QMainWindow):
     def onToggleCalendar(self, state:bool):
         self.calendar.setVisible(state)
         self.action_calendar.setToolTip( f"{'hide' if state else 'show'} calendar")
+
+    def onCalendarSelect(self, date: QDate, count: int):
+        print(date, count)
+        msg = QLocale.system().toString(date, format=QLocale.FormatType.ShortFormat)
+        self.statusBar().showMessage(f"{msg} : {count} packages", 5000)
 
     def onSelectWarning(self):
         self.filter.setCurrentIndex(1)

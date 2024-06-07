@@ -17,7 +17,7 @@ Repository = "https://github.com/papajoke/logkonsult.git"
 
 [project.scripts]
 # https://setuptools.pypa.io/en/stable/userguide/entry_point.html
-logkonsult-gui = "logkonsult:main"
+logkonsult-gui = "logkonsult"
 
 
 [build-system]

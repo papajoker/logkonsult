@@ -4,7 +4,9 @@ from PySide6.QtWidgets import (
     QComboBox,
     QCompleter,
     QDialogButtonBox,
+    QFrame,
     QHeaderView,
+    QLabel,
     QLineEdit,
     QMainWindow,
     QMessageBox,
@@ -28,10 +30,18 @@ from PySide6.QtGui import (
 )
 from .model.delegates import TableDelegate
 from .model.alpm import HEADERS, TimerData
-from .model.store import ToolProxyModel, MainProxyModel
+from .model.store import MainModel, ToolProxyModel, MainProxyModel
+
+class VLine(QFrame):
+    # a simple VLine, like the one you get from designer
+    def __init__(self):
+        super(VLine, self).__init__()
+        self.setFrameShape(QFrame.Shape.VLine)
+        self.setFrameShadow(QFrame.Shadow.Sunken)
+
 
 class MainWindow(QMainWindow):
-    def __init__(self, model: QAbstractTableModel):
+    def __init__(self, model: MainModel):
         super().__init__()
         self.model = model
         self.setWindowTitle(f"/var/log/pacman.log ({self.model.get_transactions()})")
@@ -97,10 +107,25 @@ class MainWindow(QMainWindow):
         calendar = QCalendarWidget(self.centralWidget())
         self.init_calendar(calendar)
         layout.addWidget(calendar)
-        #layout.addLayout(layoutBtn)
 
         self.onSelectWarning()
-        self.statusBar().showMessage(f" {self.model.get_transactions()} transactions")
+        self.init_status_bar()
+
+    def init_status_bar(self):
+        count = self.model.get_transactions()
+        self.statusBar().showMessage(f" {count} transactions")
+        self.statusBar().addPermanentWidget(VLine())
+        status = QLabel(str(count))
+        status.setToolTip("Transactions")
+        self.statusBar().addPermanentWidget(status)
+        self.statusBar().addPermanentWidget(VLine())
+        status = QLabel(str(self.model.get_pkgs_count()))
+        status.setToolTip("Packages")
+        self.statusBar().addPermanentWidget(status)
+        self.statusBar().addPermanentWidget(VLine())
+        status = QLabel(str(self.model.days))
+        status.setToolTip("Days")
+        self.statusBar().addPermanentWidget(status)
 
     def init_calendar(self, calendar):
         times = TimerData(self.model._data)

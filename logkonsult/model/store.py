@@ -21,9 +21,10 @@ def _colors_generate(logs):
 
 class MainModel(QAbstractTableModel):
 
-    def __init__(self, data: list[Paclog]):
+    def __init__(self, data: list[Paclog], days=0):
         super().__init__()
         self._data = data
+        self.days = days
         _colors_generate(self._data)
 
     def data(self, index, role):
@@ -81,8 +82,12 @@ class MainModel(QAbstractTableModel):
             yield HEADERS[i].capitalize()
 
     def get_transactions(self):
-        """ count transaction number"""
+        """ count transaction number """
         return len(set(i.transaction for i in self._data))
+
+    def get_pkgs_count(self):
+        """ count packages """
+        return len(set(i.package for i in self._data))
 
     #def get_raw(self):
     #    return self._data.sauvegarde()

@@ -3,7 +3,12 @@ __pycache__
 dist
 *.egg-info
 divers
+pkg/pkg
+pkg/src
+pkg/logkonsult*
 
 .directory
 *.pyc
+*.tar.gz
 *.test.*
+*.to*

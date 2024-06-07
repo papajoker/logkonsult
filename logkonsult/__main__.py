@@ -29,9 +29,9 @@ items.sort()
 print(len(items))
 
 class ApplicationQt(QApplication):
-    def __init__(self, args, datas: list):
+    def __init__(self, args, datas: list, days=0):
         super().__init__(args)
-        self.window = MainWindow(MainModel(datas))
+        self.window = MainWindow(MainModel(datas, days))
         self.setWindowIcon(QIcon(str(Path(__file__).parent / "assets/logkonsult.svg")))
 
         locale = QLocale()
@@ -41,7 +41,7 @@ class ApplicationQt(QApplication):
         QCoreApplication.installTranslator(trans)  # dialog btns translate
 
 
-appli = ApplicationQt(sys.argv, datas=items)
+appli = ApplicationQt(sys.argv, datas=items, days=parser.max_day)
 appli.window.show()
 code = appli.exec()
 if code:

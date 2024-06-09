@@ -89,8 +89,20 @@ class PaclogWarn(Paclog):
 
     def __init__(self, ldate, msg: str, transaction:int, line:int):
         super().__init__(ldate, pkg="", version="", verb=Verbs.WARNING, transaction=transaction, line=line)
-        if msg.endswith(".pacnew") and not Path(msg.split()[-1]).exists():
+        # [ALPM] warning: /etc/mkinitcpio.conf installed as /etc/mkinitcpio.conf.pacnew
+        msg_parts = msg.split()
+        print("MSG:",msg_parts)
+        if msg.endswith(".pacnew") and not Path(msg_parts[-1]).exists():
             msg = f"FIXED {msg}"
+        elif "permissions differ" in msg:
+            # [ALPM] warning: directory permissions differ on /opt/test/ filesystem: 775 package: 755
+            # FIXME new version
+            # [ALPM] warning: directory permissions differ on /opt/test/, filesystem: 757  package: 755
+            mode, dir_ = msg_parts[-1], msg_parts[-5].removesuffix(",")
+            if mode == oct(Path(dir_).stat().st_mode)[-3:]:
+                msg = f"FIXED {msg}"
+
+        # test if is good
         self.message = msg
 
     def __str__(self):
@@ -101,7 +113,7 @@ class Parser:
     """
     read pacman.log
     """
-    max_day = 60
+    max_day = 90
     goods = Verbs.values()
     INIT_TRANSACTION = "[PACMAN] Running"
 
@@ -147,17 +159,11 @@ class Parser:
                     continue
                 fields["date"] = logdate
 
-                # print(fields)
-                # print(msgs)
-                # print()
-
                 if fields["verb"] == Verbs.WARNING:
-                    # fields['verb'] = fields['verb'][:-1]
                     fields["msg"] = fields["msg"][9:]
-                    # fields['pkg'] = '' # old_pkg
-                    # fields['ver'] = ''
                     if "directory permissions differ" in fields["msg"]:
-                        fields["msg"] = fields["msg"] + " " + next(log_fh).rstrip()
+                        #OLD version, msg in next line ! fields["msg"] = fields["msg"] + " " + next(log_fh).rstrip()
+                        fields["msg"] = fields["msg"]
                     if transaction_id != transaction_count:
                         transaction_id += 1
                         transaction_count = transaction_id
@@ -182,7 +188,8 @@ class Parser:
                     fields["ver"] = fields["ver"][0][1:-1]
 
                 if warn and fields["pkg"]:
-                    # FIXME ? no sens with yield, too late -> console -> warn is displayed
+                    # no sens with yield, too late -> console -> warn is displayed
+                    # FIXME  if 2 consecutive errors -> no package
                     warn.package = fields["pkg"]
                     warn = None
 

@@ -32,10 +32,11 @@ from .widgets import VLine, CalendarWidget
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, model: MainModel):
+    def __init__(self, model: MainModel, log_name: str):
         super().__init__()
+        self.log_name = log_name
         self.model = model
-        self.setWindowTitle(f"/var/log/pacman.log ({self.model.get_transactions()})")
+        self.setWindowTitle(f"{log_name} ({self.model.get_transactions()})")
         self.resize(820, 380)
         self.statusBar()
         #self.edits = {}
@@ -171,7 +172,7 @@ class MainWindow(QMainWindow):
         if not os.path.exists("/usr/bin/kate"):
             return
         process = QProcess()
-        process.startDetached("/usr/bin/kate", ["/var/log/pacman.log", "--line", f"{entry.line}"])
+        process.startDetached("/usr/bin/kate", [self.log_name, "--line", f"{entry.line}"])
 
 
     def closeEvent(self, event):

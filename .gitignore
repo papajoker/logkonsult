@@ -12,3 +12,4 @@ pkg/logkonsult*
 *.tar.gz
 *.test.*
 *.to*
+TODO.*

@@ -10,6 +10,7 @@ from PySide6.QtCore import (
     QCoreApplication,
     QLibraryInfo,
     QLocale,
+    QProcess,
     QTranslator,
 )
 from PySide6.QtGui import (
@@ -19,7 +20,17 @@ from .model.alpm import Parser
 from .model.store import MainModel
 from .ui.application import MainWindow
 
+
 LOG_FILE = "/var/log/pacman.log"
+
+runner = QProcess()
+runner.start("pacman-conf")
+runner.waitForFinished()
+if not runner.exitCode():
+    c_out = runner.readAllStandardOutput().toStdString().splitlines()
+    LOG_FILE = next(filter(lambda x: x.startswith("LogFile"), c_out)).split()[-1]
+print(LOG_FILE)
+
 
 parser = Parser(LOG_FILE)
 items = [*parser.load()]
@@ -31,7 +42,7 @@ print(len(items))
 class ApplicationQt(QApplication):
     def __init__(self, args, datas: list, days=0):
         super().__init__(args)
-        self.window = MainWindow(MainModel(datas, days))
+        self.window = MainWindow(MainModel(datas, days), log_name=LOG_FILE)
         self.setWindowIcon(QIcon(str(Path(__file__).parent / "assets/logkonsult.svg")))
 
         locale = QLocale()

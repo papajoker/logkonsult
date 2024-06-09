@@ -1,6 +1,7 @@
 from collections import defaultdict
 import datetime
 from enum import Enum
+from pathlib import Path
 
 
 class Verbs(Enum):
@@ -88,6 +89,8 @@ class PaclogWarn(Paclog):
 
     def __init__(self, ldate, msg: str, transaction:int, line:int):
         super().__init__(ldate, pkg="", version="", verb=Verbs.WARNING, transaction=transaction, line=line)
+        if msg.endswith(".pacnew") and not Path(msg.split()[-1]).exists():
+            msg = f"FIXED {msg}"
         self.message = msg
 
     def __str__(self):

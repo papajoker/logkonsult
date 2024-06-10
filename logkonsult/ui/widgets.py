@@ -103,29 +103,26 @@ class CalendarWidget(QCalendarWidget):
         return super().eventFilter(obj, event)
 
     def paintCell(self, painter, rect, date):
-        if val := self.dates.datas.get(date):
-            color = QPalette().color(QPalette.Text)
+        if values := self.dates.datas.get(date):
+            val, pourcent = values
+            color = QPalette().color(QPalette.ColorRole.Text)
             painter.setPen(QPen(Qt.transparent))
-            colorb = QPalette().color(QPalette.Highlight)
-            if val < 100:
-                colorb.setAlpha(150)
-            if val < 12:
-                colorb.setAlpha(50)
+            colorb = QPalette().color(QPalette.ColorRole.Highlight)
+            colorb.setAlpha((pourcent*2)+55)
             brush = QBrush(colorb)
             brush.setStyle(Qt.Dense4Pattern)
             painter.setBrush(brush)
             painter.drawRect(rect)
         else:
-            color = QPalette().color(QPalette.PlaceholderText)
-            #val = self.dates.datas.get(date)
-            #painter.drawRect(rect)
+            color = QPalette().color(QPalette.ColorGroup.Disabled, QPalette.ColorRole.PlaceholderText)
         painter.setPen(QPen(color))
-        painter.drawText(rect, Qt.AlignHCenter | Qt.AlignVCenter, str(date.day()))
+        painter.drawText(rect, Qt.AlignHCenter | Qt.AlignVCenter, date.day())
 
     def onClick(self, date):
-        count = self.dates.datas.get(date)
+        count = self.dates.datas.get(date)[0]
+        print(self.dates.datas.get(date))
         self.onSelected.emit(date, count)
 
     def onDoubleClicked(self, date):
-        count = self.dates.datas.get(date)
+        count = self.dates.datas.get(date)[0]
         self.onEnter.emit(date, count)

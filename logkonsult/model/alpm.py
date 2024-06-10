@@ -79,6 +79,9 @@ class Paclog:
         return f"[{self.datelog}] {self.action.name:12} : {self.package:28} {self.version} ({self.transaction})"
 
 
+'''
+search `alpm_logaction` in https://gitlab.archlinux.org/pacman/pacman/-/blob/master/lib/libalpm/add.c
+'''
 class PaclogWarn(Paclog):
     """
     entry with warning in log file
@@ -209,12 +212,16 @@ class Parser:
 
 
 class TimerData:
+    """ model for calendar, available dates """
     def __init__(self, logs: list[Paclog]):
         self.logs = logs
         self.datas = defaultdict(int)
         for log in (l.qdate.date() for l in logs if isinstance(l, Paclog)):
             self.datas[log] += 1
-
+        self.maxi = max(self.datas.values())
+        for i, val in self.datas.items():
+            pourcent = round(val /self.maxi * 100)
+            self.datas[i] = (val, (pourcent // 5 ) * 5 if pourcent < 100 else 100)
 
     def count(self) -> int:
         return sum(self.datas.values())

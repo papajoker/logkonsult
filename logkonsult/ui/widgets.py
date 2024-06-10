@@ -32,9 +32,10 @@ class VLine(QFrame):
 
 
 class CalendarWidget(QCalendarWidget):
-    
+
     onSelected = Signal(object, int)
-    
+    onEnter = Signal(object, int)
+
     def __init__(self, dates:TimerData, parent=None):
         super().__init__(parent, gridVisible=False,
             horizontalHeaderFormat=QCalendarWidget.SingleLetterDayNames,
@@ -47,6 +48,7 @@ class CalendarWidget(QCalendarWidget):
         self.setEnabled(True)
         #self.setGeometry(QRect(0, 0, 320, 250))
         self.clicked.connect(self.onClick)
+        self.activated.connect(self.onDoubleClicked)
 
         self.table_view = self.findChild(QTableView, "qt_calendar_calendarview")
         self.table_view.viewport().installEventFilter(self)
@@ -116,7 +118,7 @@ class CalendarWidget(QCalendarWidget):
             painter.drawRect(rect)
         else:
             color = QPalette().color(QPalette.PlaceholderText)
-            val = self.dates.datas.get(date.toString("yyyy-MM-dd"))
+            #val = self.dates.datas.get(date.toString("yyyy-MM-dd"))
             #painter.drawRect(rect)
         painter.setPen(QPen(color))
         painter.drawText(rect, Qt.AlignHCenter | Qt.AlignVCenter, str(date.day()))
@@ -124,3 +126,7 @@ class CalendarWidget(QCalendarWidget):
     def onClick(self, date):
         count = self.dates.datas.get(date.toString("yyyy-MM-dd"))
         self.onSelected.emit(date, count)
+
+    def onDoubleClicked(self, date):
+        count = self.dates.datas.get(date.toString("yyyy-MM-dd"))
+        self.onEnter.emit(date, count)

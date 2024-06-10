@@ -3,6 +3,8 @@ import datetime
 from enum import Enum
 from pathlib import Path
 
+from PySide6.QtCore import QDate, QDateTime, QLocale
+
 
 class Verbs(Enum):
     """pacman transaction type"""
@@ -31,25 +33,22 @@ HEADERS = ("date", "action", "package", "version", "message")
 ICO_ACTIONS = ("⚠", ">", "<", "≫", "🗘")
 
 
-#TODO Qdate ? 
-# use Qdate in Paclog ? to test in new branch
-#   best for less conversions in view ?
-#   best for filter date by locale format 
-
 class Paclog:
     """
     entry in log file
     """
-    __slots__ = ("date", "package", "version", "action", "transaction", "line", "color")
+    __slots__ = ("date", "package", "version", "action", "transaction", "line", "color", "qdate", "datelog")
 
-    def __init__(self, ldate, pkg: str, version: str, verb: Verbs, transaction:int, line:int):
-        self.date = ldate
+    def __init__(self, datelog: datetime.datetime, pkg: str, version: str, verb: Verbs, transaction:int, line:int):
+        self.datelog = datelog
         self.package = pkg
         self.version = version
         self.action = verb
         self.transaction = transaction
         self.color = None
         self.line = line
+        self.qdate = QDateTime.fromSecsSinceEpoch(round(datelog.timestamp()))
+        self.date = QLocale.system().toString(self.qdate, format=QLocale.FormatType.ShortFormat)
 
     def __getitem__(self, key: int):
         """ access as array"""
@@ -57,8 +56,7 @@ class Paclog:
         match name:
             case "action":
                 value = self.__getattribute__(name).name.lower()
-            case "date":
-                value = f"{self.__getattribute__(name):%Y-%m-%d}"
+            # case "date": value = f"{self.__getattribute__(name):%Y-%m-%d}"
             case _ :
                 try:
                     value = self.__getattribute__(name)
@@ -69,7 +67,7 @@ class Paclog:
     def __lt__(self, other):
         """ first transaction reversed, date """
         if self.transaction == other.transaction:
-            return self.date > other.date
+            return self.datelog > other.datelog
         return self.transaction > other.transaction
 
 
@@ -78,7 +76,7 @@ class Paclog:
         return ICO_ACTIONS[self.action.value]
 
     def __str__(self):
-        return f"[{self.date}] {self.action.name:12} : {self.package:28} {self.version} ({self.transaction})"
+        return f"[{self.datelog}] {self.action.name:12} : {self.package:28} {self.version} ({self.transaction})"
 
 
 class PaclogWarn(Paclog):
@@ -87,11 +85,10 @@ class PaclogWarn(Paclog):
     """
     __slots__ = ("message",)
 
-    def __init__(self, ldate, msg: str, transaction:int, line:int):
-        super().__init__(ldate, pkg="", version="", verb=Verbs.WARNING, transaction=transaction, line=line)
+    def __init__(self, datelog, msg: str, transaction:int, line:int):
+        super().__init__(datelog, pkg="", version="", verb=Verbs.WARNING, transaction=transaction, line=line)
         # [ALPM] warning: /etc/mkinitcpio.conf installed as /etc/mkinitcpio.conf.pacnew
         msg_parts = msg.split()
-        print("MSG:",msg_parts)
         if msg.endswith(".pacnew") and not Path(msg_parts[-1]).exists():
             msg = f"FIXED {msg}"
         elif "permissions differ" in msg:
@@ -168,7 +165,7 @@ class Parser:
                         transaction_id += 1
                         transaction_count = transaction_id
                     warn = PaclogWarn(
-                        ldate=fields["date"],
+                        datelog=fields["date"],
                         msg=fields["msg"],
                         transaction=transaction_id,
                         line = line_id,
@@ -197,7 +194,7 @@ class Parser:
                     transaction_id += 1
                     transaction_count = transaction_id
                 yield Paclog(
-                    ldate=fields["date"],
+                    datelog=fields["date"],
                     verb=fields["verb"],
                     version=fields["ver"],
                     pkg=fields["pkg"],
@@ -214,19 +211,18 @@ class Parser:
 class TimerData:
     def __init__(self, logs: list[Paclog]):
         self.logs = logs
-        #d = defaultdict(lambda: 0)
         self.datas = defaultdict(lambda: 0)
-        for log in (l.date for l in logs if isinstance(l, Paclog)):
-            self.datas[str(log.date())] += 1
+        #TODO use l.qdate
+        for log in (f"{l.datelog:%Y-%m-%d}" for l in logs if isinstance(l, Paclog)):
+        #for log in (l.qdate for l in logs if isinstance(l, Paclog)):
+            self.datas[log] += 1
 
 
     def count(self) -> int:
-        ret = 0
         return sum(self.datas.values())
 
     def min_max(self) -> tuple[int, int]:
         return min(self.datas.values()), max(self.datas.values())
-
 
 
 

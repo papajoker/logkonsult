@@ -34,10 +34,10 @@ class MainModel(QAbstractTableModel):
         if role == Qt.ItemDataRole.UserRole and HEADERS[index.column()] == "action":
             return self._data[index.row()].get_ico()
 
-        if role == Qt.ItemDataRole.DisplayRole and HEADERS[index.column()] == "date":
+        '''if role == Qt.ItemDataRole.DisplayRole and HEADERS[index.column()] == "date":
             d = QDateTime.fromSecsSinceEpoch(round(self._data[index.row()].date.timestamp()))
             d.setTimeSpec(Qt.TimeSpec.LocalTime)
-            return d
+            return d'''
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             return self._data[index.row()][index.column()]
 
@@ -46,8 +46,7 @@ class MainModel(QAbstractTableModel):
         if role in (Qt.ItemDataRole.StatusTipRole, Qt.ItemDataRole.ToolTipRole):
             item = self._data[index.row()]
             msg = item.message if isinstance(item, PaclogWarn) else ""
-            d = QDateTime.fromSecsSinceEpoch(round(item.date.timestamp()))
-            msg_date = QLocale.system().toString(d, format=QLocale.FormatType.LongFormat)
+            msg_date = QLocale.system().toString(item.qdate, format=QLocale.FormatType.LongFormat)
             return f"{item.action.name}\t{item.package}\t{msg}\n\t - {msg_date}\n\t - line {item.line:04}"
 
     def flags(self, index):

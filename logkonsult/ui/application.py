@@ -104,9 +104,13 @@ class MainWindow(QMainWindow):
         self.calendar.setVisible(False)
         self.init_calendar(self.calendar)
         self.calendar.onSelected.connect(self.onCalendarSelect)
+        self.calendar.onEnter.connect(self.onCalendarEnter)
         layout.addWidget(self.calendar)
 
-        self.onSelectWarning()
+        #self.onSelectWarning()
+        msg = QLocale.system().toString(QDate.currentDate(), format=QLocale.FormatType.ShortFormat)
+        self.filter.setCurrentIndex(0)
+        self.search.setText(msg)
         self.init_status_bar()
 
     def init_status_bar(self):
@@ -158,6 +162,12 @@ class MainWindow(QMainWindow):
     def onCalendarSelect(self, date: QDate, count: int):
         msg = QLocale.system().toString(date, format=QLocale.FormatType.ShortFormat)
         self.statusBar().showMessage(f"{msg} : {count} package{'s' if count > 1 else ''}", 5000)
+
+    def onCalendarEnter(self, date: QDate, count: int):
+        msg = QLocale.system().toString(date, format=QLocale.FormatType.ShortFormat)
+        self.statusBar().showMessage(f"{msg} filter : {count} package{'s' if count > 1 else ''}", 5000)
+        self.filter.setCurrentIndex(0)
+        self.search.setText(msg)
 
     def onSelectWarning(self):
         self.filter.setCurrentIndex(1)

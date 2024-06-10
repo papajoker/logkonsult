@@ -105,6 +105,8 @@ class MainProxyModel(QSortFilterProxyModel):
             if text := str(self.sourceModel().data(index, Qt.ItemDataRole.DisplayRole)):
                 if regex not in text.lower():
                     return False
+            else:
+                return False
         return True
 
 

@@ -102,7 +102,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.table)
         self.calendar = CalendarWidget(TimerData(self.model._data), self.centralWidget())
         self.calendar.setVisible(False)
-        self.init_calendar(self.calendar)
         self.calendar.onSelected.connect(self.onCalendarSelect)
         self.calendar.onEnter.connect(self.onCalendarEnter)
         layout.addWidget(self.calendar)
@@ -130,13 +129,6 @@ class MainWindow(QMainWindow):
         status.setToolTip("Days")
         bar.addPermanentWidget(status)
 
-    def init_calendar(self, calendar):
-        times = TimerData(self.model._data)
-        maxi = QDate.fromString(list(times.datas.keys())[0], "yyyy-MM-dd")
-        calendar.setMaximumDate(maxi)
-        mini = QDate.fromString(list(times.datas.keys())[-1], "yyyy-MM-dd")
-        calendar.setDateRange(mini, maxi)
-
     def onFilter(self, text):
         col = 0
         if isinstance(self.search.completer().model(), ToolProxyModel):
@@ -161,11 +153,11 @@ class MainWindow(QMainWindow):
 
     def onCalendarSelect(self, date: QDate, count: int):
         msg = QLocale.system().toString(date, format=QLocale.FormatType.ShortFormat)
-        self.statusBar().showMessage(f"{msg} : {count} package{'s' if count > 1 else ''}", 5000)
+        self.statusBar().showMessage(f"{msg} : {count} entr{'ies' if count > 1 else 'y'}", 5000)
 
     def onCalendarEnter(self, date: QDate, count: int):
         msg = QLocale.system().toString(date, format=QLocale.FormatType.ShortFormat)
-        self.statusBar().showMessage(f"{msg} filter : {count} package{'s' if count > 1 else ''}", 5000)
+        self.statusBar().showMessage(f"{msg} filter : {count} entr{'ies' if count > 1 else 'y'}", 5000)
         self.filter.setCurrentIndex(0)
         self.search.setText(msg)
 

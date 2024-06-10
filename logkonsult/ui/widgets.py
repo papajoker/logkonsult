@@ -46,7 +46,6 @@ class CalendarWidget(QCalendarWidget):
         self.setWeekdayTextFormat(Qt.DayOfWeek.Sunday, self.headerTextFormat())
         self.dates = dates
         self.setEnabled(True)
-        #self.setGeometry(QRect(0, 0, 320, 250))
         self.clicked.connect(self.onClick)
         self.activated.connect(self.onDoubleClicked)
 
@@ -54,10 +53,10 @@ class CalendarWidget(QCalendarWidget):
         self.table_view.viewport().installEventFilter(self)
         self.setFirstDayOfWeek(Qt.Monday)
 
-        maxi = QDate.fromString(list(self.dates.datas.keys())[0], "yyyy-MM-dd")
-        self.setMaximumDate(maxi)
-        mini = QDate.fromString(list(self.dates.datas.keys())[-1], "yyyy-MM-dd")
-        self.setDateRange(mini, maxi)
+        self.setDateRange(
+            list(self.dates.datas.keys())[0],
+            list(self.dates.datas.keys())[-1]
+        )
 
     def referenceDate(self):
         refDay = 1
@@ -99,12 +98,12 @@ class CalendarWidget(QCalendarWidget):
         if event.type() ==QEvent.MouseButtonRelease and obj is self.table_view.viewport():
             ix = self.table_view.indexAt(event.position().toPoint())
             date = self.dateForCell(ix.row(), ix.column())
-            if not self.dates.datas.get(date.toString("yyyy-MM-dd")):
+            if not self.dates.datas.get(date):
                 return True
         return super().eventFilter(obj, event)
 
     def paintCell(self, painter, rect, date):
-        if val := self.dates.datas.get(date.toString("yyyy-MM-dd")):
+        if val := self.dates.datas.get(date):
             color = QPalette().color(QPalette.Text)
             painter.setPen(QPen(Qt.transparent))
             colorb = QPalette().color(QPalette.Highlight)
@@ -118,15 +117,15 @@ class CalendarWidget(QCalendarWidget):
             painter.drawRect(rect)
         else:
             color = QPalette().color(QPalette.PlaceholderText)
-            #val = self.dates.datas.get(date.toString("yyyy-MM-dd"))
+            #val = self.dates.datas.get(date)
             #painter.drawRect(rect)
         painter.setPen(QPen(color))
         painter.drawText(rect, Qt.AlignHCenter | Qt.AlignVCenter, str(date.day()))
 
     def onClick(self, date):
-        count = self.dates.datas.get(date.toString("yyyy-MM-dd"))
+        count = self.dates.datas.get(date)
         self.onSelected.emit(date, count)
 
     def onDoubleClicked(self, date):
-        count = self.dates.datas.get(date.toString("yyyy-MM-dd"))
+        count = self.dates.datas.get(date)
         self.onEnter.emit(date, count)

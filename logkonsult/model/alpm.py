@@ -211,10 +211,8 @@ class Parser:
 class TimerData:
     def __init__(self, logs: list[Paclog]):
         self.logs = logs
-        self.datas = defaultdict(lambda: 0)
-        #TODO use l.qdate
-        for log in (f"{l.datelog:%Y-%m-%d}" for l in logs if isinstance(l, Paclog)):
-        #for log in (l.qdate for l in logs if isinstance(l, Paclog)):
+        self.datas = defaultdict(int)
+        for log in (l.qdate.date() for l in logs if isinstance(l, Paclog)):
             self.datas[log] += 1
 
 

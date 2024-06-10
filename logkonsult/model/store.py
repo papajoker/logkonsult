@@ -33,14 +33,8 @@ class MainModel(QAbstractTableModel):
             return False
         if role == Qt.ItemDataRole.UserRole and HEADERS[index.column()] == "action":
             return self._data[index.row()].get_ico()
-
-        '''if role == Qt.ItemDataRole.DisplayRole and HEADERS[index.column()] == "date":
-            d = QDateTime.fromSecsSinceEpoch(round(self._data[index.row()].date.timestamp()))
-            d.setTimeSpec(Qt.TimeSpec.LocalTime)
-            return d'''
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             return self._data[index.row()][index.column()]
-
         if role == Qt.ItemDataRole.UserRole + 1:
             return self._data[index.row()]
         if role in (Qt.ItemDataRole.StatusTipRole, Qt.ItemDataRole.ToolTipRole):

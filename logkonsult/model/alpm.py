@@ -95,14 +95,12 @@ class PaclogWarn(Paclog):
         if msg.endswith(".pacnew") and not Path(msg_parts[-1]).exists():
             msg = f"FIXED {msg}"
         elif "permissions differ" in msg:
-            # [ALPM] warning: directory permissions differ on /opt/test/ filesystem: 775 package: 755
-            # FIXME new version
-            # [ALPM] warning: directory permissions differ on /opt/test/, filesystem: 757  package: 755
-            mode, dir_ = msg_parts[-1], msg_parts[-5].removesuffix(",")
-            if mode == oct(Path(dir_).stat().st_mode)[-3:]:
-                msg = f"FIXED {msg}"
-
-        # test if is good
+            mode, dir_ = msg_parts[-1], Path(msg_parts[-5].removesuffix(","))
+            try:
+                if not dir_.exists() or mode == oct(dir_.stat().st_mode)[-3:]:
+                    msg = f"FIXED {msg}"
+            except PermissionError:
+                pass
         self.message = msg
 
     def __str__(self):

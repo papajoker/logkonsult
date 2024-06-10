@@ -116,7 +116,7 @@ class CalendarWidget(QCalendarWidget):
         else:
             color = QPalette().color(QPalette.ColorGroup.Disabled, QPalette.ColorRole.PlaceholderText)
         painter.setPen(QPen(color))
-        painter.drawText(rect, Qt.AlignHCenter | Qt.AlignVCenter, date.day())
+        painter.drawText(rect, Qt.AlignHCenter | Qt.AlignVCenter, str(date.day()))
 
     def onClick(self, date):
         count = self.dates.datas.get(date)[0]

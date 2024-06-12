@@ -37,8 +37,8 @@ class VLine(QFrame):
 SVG_BADGE = """<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
   <defs id="defs3051">
     <style type="text/css" id="current-color-scheme">
-        .ColorScheme-Text { color: #fcfcfc; }
-        .ColorScheme-Highlight { color: #3daee9; }
+        .ColorScheme-Text {{ color: #fcfcfc; }}
+        .ColorScheme-Highlight {{ color: {1}; }}
     </style>
   </defs>
 <g style="fill-opacity:0.5;">
@@ -50,7 +50,7 @@ SVG_BADGE = """<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width
 <text x="8" y="12"
     dominant-baseline="central" class ="ColorScheme-Text"
     text-anchor="middle" font-size="10px" style="fill:currentColor"
-    >COUNT</text>
+    >{0}</text>
 </g>
 </svg>
 """
@@ -60,6 +60,7 @@ class CalendarWidget(QCalendarWidget):
 
     onSelected = Signal(object, int)
     onEnter = Signal(object, int)
+
 
     def __init__(self, dates:TimerData, parent=None):
         super().__init__(parent, gridVisible=False,
@@ -82,6 +83,9 @@ class CalendarWidget(QCalendarWidget):
             list(self.dates.datas.keys())[0],
             list(self.dates.datas.keys())[-1]
         )
+        self.HIGHLIGHT = QPalette().color(QPalette.ColorRole.Highlight).name()
+        self.WARM = "#ff8000"
+        #self.getColors()
 
     def referenceDate(self):
         refDay = 1
@@ -129,7 +133,7 @@ class CalendarWidget(QCalendarWidget):
 
     def paintCell(self, painter, rect: QRect, date):
         if values := self.dates.datas.get(date):
-            val, pourcent = values
+            val, pourcent, warm = values
             color = QPalette().color(QPalette.ColorRole.Text)
             painter.setPen(QPen(Qt.GlobalColor.transparent))
             colorb = QPalette().color(QPalette.ColorRole.Highlight)
@@ -138,10 +142,10 @@ class CalendarWidget(QCalendarWidget):
             brush.setStyle(Qt.BrushStyle.Dense4Pattern)
             painter.setBrush(brush)
             painter.drawRect(rect)
-            svg = SVG_BADGE.replace("COUNT", str(val), 1)
+            svg =SVG_BADGE.format(val, self.HIGHLIGHT if not warm else self.WARM)
             qimage = QImage.fromData(str.encode(svg))
             pt = rect.bottomRight()
-            painter.drawImage(QPoint(pt.x()-17, pt.y()-15),qimage)
+            painter.drawImage(QPoint(pt.x()-17, pt.y()-15), qimage)
         else:
             color = QPalette().color(QPalette.ColorGroup.Disabled, QPalette.ColorRole.PlaceholderText)
         painter.setPen(QPen(color))
@@ -155,3 +159,15 @@ class CalendarWidget(QCalendarWidget):
     def onDoubleClicked(self, date):
         count = self.dates.datas.get(date)[0]
         self.onEnter.emit(date, count)
+
+
+    '''
+    for test / display theme colors
+    def getColors(self):
+        for c in Qt.GlobalColor:
+            color = QColor(c)
+            print(color.name(), c)
+        for c in QPalette.ColorRole:
+            color = QPalette().color(c)
+            print(f"{c:32}", color.name())
+    '''

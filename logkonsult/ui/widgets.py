@@ -5,6 +5,8 @@ from PySide6.QtCore import (
     QEvent,
     QProcess,
     Signal,
+    QPoint,
+    QRect,
     QSortFilterProxyModel,
 )
 from PySide6.QtWidgets import (
@@ -15,6 +17,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import (
     QBrush,
     QColor,
+    QImage,
     QPainter,
     QPalette,
     QPen,
@@ -29,6 +32,28 @@ class VLine(QFrame):
         super(VLine, self).__init__()
         self.setFrameShape(QFrame.Shape.VLine)
         self.setFrameShadow(QFrame.Shadow.Sunken) 
+
+
+SVG_BADGE = """<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+  <defs id="defs3051">
+    <style type="text/css" id="current-color-scheme">
+        .ColorScheme-Text { color: #fcfcfc; }
+        .ColorScheme-Highlight { color: #3daee9; }
+    </style>
+  </defs>
+<g style="fill-opacity:0.5;">
+<g transform="translate(8 8)">
+    <circle cx="0" cy="0" r="8"
+        class ="ColorScheme-Highlight" style="fill:currentColor;fill-opacity:0.5;">
+    </circle>
+</g>
+<text x="8" y="12"
+    dominant-baseline="central" class ="ColorScheme-Text"
+    text-anchor="middle" font-size="10px" style="fill:currentColor"
+    >COUNT</text>
+</g>
+</svg>
+"""
 
 
 class CalendarWidget(QCalendarWidget):
@@ -102,21 +127,25 @@ class CalendarWidget(QCalendarWidget):
                 return True
         return super().eventFilter(obj, event)
 
-    def paintCell(self, painter, rect, date):
+    def paintCell(self, painter, rect: QRect, date):
         if values := self.dates.datas.get(date):
             val, pourcent = values
             color = QPalette().color(QPalette.ColorRole.Text)
-            painter.setPen(QPen(Qt.transparent))
+            painter.setPen(QPen(Qt.GlobalColor.transparent))
             colorb = QPalette().color(QPalette.ColorRole.Highlight)
             colorb.setAlpha((pourcent*2)+55)
             brush = QBrush(colorb)
-            brush.setStyle(Qt.Dense4Pattern)
+            brush.setStyle(Qt.BrushStyle.Dense4Pattern)
             painter.setBrush(brush)
             painter.drawRect(rect)
+            svg = SVG_BADGE.replace("COUNT", str(val), 1)
+            qimage = QImage.fromData(str.encode(svg))
+            pt = rect.bottomRight()
+            painter.drawImage(QPoint(pt.x()-17, pt.y()-15),qimage)
         else:
             color = QPalette().color(QPalette.ColorGroup.Disabled, QPalette.ColorRole.PlaceholderText)
         painter.setPen(QPen(color))
-        painter.drawText(rect, Qt.AlignHCenter | Qt.AlignVCenter, str(date.day()))
+        painter.drawText(rect, Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter, str(date.day()))
 
     def onClick(self, date):
         count = self.dates.datas.get(date)[0]

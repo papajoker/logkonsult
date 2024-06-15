@@ -32,10 +32,10 @@ if not runner.exitCode():
     LOG_FILE = next(filter(lambda x: x.startswith("LogFile"), c_out)).split()[-1]
 
 parser = argparse.ArgumentParser(prog='logkonsult-gui')
-parser.add_argument("-d", type=int, default = Parser.max_day, help="last days", metavar="DAYS")
-parser.add_argument("-f", "--file", help="pacman log", type=argparse.FileType('r'), default=LOG_FILE)
+parser.add_argument("-d", type=int, default = Parser.max_day, help=f"since ({Parser.max_day}) days", metavar="DAYS")
+parser.add_argument("-f", type=argparse.FileType('r'), default=LOG_FILE, help=f"pacman log ({LOG_FILE})", metavar="LOGFILE")
 args =parser.parse_args()
-LOG_FILE = args.file.name
+LOG_FILE = args.f.name
 print(LOG_FILE)
 parser = Parser(LOG_FILE)
 args.d -= 1

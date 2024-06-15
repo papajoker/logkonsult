@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
 
         self.table.setSelectionBehavior(QTableView.SelectRows)
         self.table.clicked.connect(self.onCurrentIndexChanged)
-        self.table.doubleClicked.connect(self.onDoubleClicked)
+        self.table.doubleClicked.connect(self.openEditor)
         self.table.setItemDelegate(TableDelegate(self.table))
 
         if toolbar := self.addToolBar("tools"):
@@ -169,14 +169,23 @@ class MainWindow(QMainWindow):
     def onCurrentIndexChanged(self, index: QModelIndex):
         self.statusBar().showMessage(index.data(Qt.ItemDataRole.StatusTipRole))
 
-    def onDoubleClicked(self, index: QModelIndex):
+    def openEditor(self, index: QModelIndex):
+        """load logfile in editor at line X"""
         entry = index.data(Qt.ItemDataRole.UserRole + 1)
         print(entry)
-        if not os.path.exists("/usr/bin/kate"):
-            return
-        process = QProcess()
-        process.startDetached("/usr/bin/kate", [self.log_name, "--line", f"{entry.line}"])
 
-
-    def closeEvent(self, event):
-        event.accept()
+        bin_dir = "/usr/bin/"
+        editors = {
+            f"{bin_dir}kate": "{0} --line {1}",
+            f"{bin_dir}gedit": "{0} +{1}",
+            f"{bin_dir}gnome-text-editor": "{0} +{1}",
+            f"{bin_dir}mousepad": "{0} -l {1}",
+            f"{bin_dir}pluma": "{0} +{1}",
+        }
+        for editor, param in editors.items():
+            if os.path.exists(editor):
+                QProcess().startDetached(
+                    editor,
+                    param.format(self.log_name, entry.line).split()
+                )
+                return

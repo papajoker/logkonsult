@@ -22,7 +22,7 @@ def _colors_generate(logs):
 
 class MainModel(QAbstractTableModel):
 
-    def __init__(self, data: list[Paclog], days=0):
+    def __init__(self, data: list[Paclog], days: int):
         super().__init__()
         self._data = data
         self.days = days

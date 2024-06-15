@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 from pathlib import Path
 import sys
 try:
@@ -29,10 +30,17 @@ runner.waitForFinished()
 if not runner.exitCode():
     c_out = runner.readAllStandardOutput().toStdString().splitlines()
     LOG_FILE = next(filter(lambda x: x.startswith("LogFile"), c_out)).split()[-1]
+
+parser = argparse.ArgumentParser(prog='logkonsult-gui')
+parser.add_argument("-d", type=int, default = Parser.max_day, help="last days", metavar="DAYS")
+parser.add_argument("-f", "--file", help="pacman log", type=argparse.FileType('r'), default=LOG_FILE)
+args =parser.parse_args()
+LOG_FILE = args.file.name
 print(LOG_FILE)
-
-
 parser = Parser(LOG_FILE)
+args.d -= 1
+parser.max_day = args.d if args.d > 0 else 0
+
 items = [*parser.load()]
 if not items:
     exit(1)
@@ -40,7 +48,7 @@ items.sort()
 print(len(items))
 
 class ApplicationQt(QApplication):
-    def __init__(self, args, datas: list, days=0):
+    def __init__(self, args, datas: list, days):
         super().__init__(args)
         self.window = MainWindow(MainModel(datas, days), log_name=LOG_FILE)
         self.setWindowIcon(QIcon(str(Path(__file__).parent / "assets/logkonsult.svg")))

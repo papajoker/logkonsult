@@ -142,10 +142,14 @@ class CalendarWidget(QCalendarWidget):
             brush.setStyle(Qt.BrushStyle.Dense4Pattern)
             painter.setBrush(brush)
             painter.drawRect(rect)
-            svg =SVG_BADGE.format(val, self.HIGHLIGHT if not warm else self.WARM)
+            svg =SVG_BADGE.format(val, self.HIGHLIGHT) # if not warm else self.WARM)
             qimage = QImage.fromData(str.encode(svg))
             pt = rect.bottomRight()
             painter.drawImage(QPoint(pt.x()-17, pt.y()-15), qimage)
+            if warm:
+                svg =SVG_BADGE.format(warm, self.WARM)
+                qimage = QImage.fromData(str.encode(svg))
+                painter.drawImage(QPoint(pt.x()-17*2, pt.y()-15), qimage)
         else:
             color = QPalette().color(QPalette.ColorGroup.Disabled, QPalette.ColorRole.PlaceholderText)
         painter.setPen(QPen(color))

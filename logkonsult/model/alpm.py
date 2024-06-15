@@ -37,9 +37,9 @@ class Paclog:
     """
     entry in log file
     """
-    __slots__ = ("date", "package", "version", "action", "transaction", "line", "color", "qdate", "datelog")
+    __slots__ = ("date", "package", "version", "action", "transaction", "line", "color", "qdate", "datelog", "installed")
 
-    def __init__(self, datelog: datetime.datetime, pkg: str, version: str, verb: Verbs, transaction:int, line:int):
+    def __init__(self, datelog: datetime.datetime, pkg: str, version: str, verb: Verbs, transaction:int, line:int, installed=True):
         self.datelog = datelog
         self.package = pkg
         self.version = version
@@ -49,6 +49,7 @@ class Paclog:
         self.line = line
         self.qdate = QDateTime.fromSecsSinceEpoch(round(datelog.timestamp()))
         self.date = QLocale.system().toString(self.qdate, format=QLocale.FormatType.ShortFormat)
+        self.installed = installed
 
     def __getitem__(self, key: int):
         """ access as array"""
@@ -115,8 +116,9 @@ class Parser:
     goods = Verbs.values()
     INIT_TRANSACTION = "[PACMAN] Running"
 
-    def __init__(self, lfile):
+    def __init__(self, lfile, pkgs: list):
         self.logfile = lfile
+        self.pkgs = pkgs
 
     def generate_dicts(self, log_fh):
         """parse logs"""
@@ -189,6 +191,7 @@ class Parser:
                     # no sens with yield, too late -> console -> warn is displayed
                     # FIXME  if 2 consecutive errors -> no package
                     warn.package = fields["pkg"]
+                    warn.installed = fields["pkg"] in self.pkgs if self.pkgs else True
                     warn = None
 
                 if transaction_id != transaction_count:
@@ -201,6 +204,7 @@ class Parser:
                     pkg=fields["pkg"],
                     transaction=transaction_id,
                     line = line_id,
+                    installed = fields["pkg"] in self.pkgs if self.pkgs else True
                 )
 
     def load(self):
@@ -213,21 +217,16 @@ class TimerData:
     """ model for calendar, available dates """
     def __init__(self, logs: list[Paclog]):
         self.logs = logs
-        self.datas = defaultdict(lambda: [0,0,False])
+        self.datas = defaultdict(lambda: [0,0,0])
         for log, warm in ((l.qdate.date(), isinstance(l, PaclogWarn) and not l.message.startswith("FIXED")) for l in logs if isinstance(l, Paclog)):
             self.datas[log][0] += 1
-            if warm : self.datas[log][2] = True
+            if warm :
+                self.datas[log][2] += 1
         self.maxi : int = max(v[0] for v in self.datas.values())
         for i, val in self.datas.items():
             count, pourcent, warm = val
             pourcent = round(count / self.maxi * 100)
-            self.datas[i] = (count, (pourcent // 5 ) * 5 if pourcent < 100 else 100, val[2])
-
-    def count(self) -> int:
-        return sum(self.datas.values())
-
-    def min_max(self) -> tuple[int, int]:
-        return min(self.datas.values()), max(self.datas.values())
+            self.datas[i] = (count, (pourcent // 5 ) * 5 if pourcent < 100 else 100, warm)
 
 
 

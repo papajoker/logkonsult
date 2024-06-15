@@ -25,11 +25,17 @@ from .ui.application import MainWindow
 LOG_FILE = "/var/log/pacman.log"
 
 runner = QProcess()
-runner.start("pacman-conf")
+runner.start("/usr/bin/pacman-conf")
 runner.waitForFinished()
 if not runner.exitCode():
     c_out = runner.readAllStandardOutput().toStdString().splitlines()
     LOG_FILE = next(filter(lambda x: x.startswith("LogFile"), c_out)).split()[-1]
+
+runner.startCommand("/usr/bin/pacman -Qq")
+runner.waitForFinished()
+if not runner.exitCode():
+    pkgs = runner.readAllStandardOutput().toStdString().splitlines()
+
 
 parser = argparse.ArgumentParser(prog='logkonsult-gui')
 parser.add_argument("-d", type=int, default = Parser.max_day, help=f"since ({Parser.max_day}) days", metavar="DAYS")
@@ -37,7 +43,8 @@ parser.add_argument("-f", type=argparse.FileType('r'), default=LOG_FILE, help=f"
 args =parser.parse_args()
 LOG_FILE = args.f.name
 print(LOG_FILE)
-parser = Parser(LOG_FILE)
+
+parser = Parser(LOG_FILE, pkgs)
 args.d -= 1
 parser.max_day = args.d if args.d > 0 else 0
 

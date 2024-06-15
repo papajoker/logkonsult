@@ -39,19 +39,15 @@ class TableDelegate(QStyledItemDelegate):
         option.font.setPointSize(self._hfont)
         option.displayAlignment = option.displayAlignment | Qt.AlignLeft
 
-        '''if HEADERS[index.column()] == "date":
-            d = index.data(Qt.ItemDataRole.UserRole + 1).date
-            print(d, type(d))
-            #d = QDateTime.fromSecsSinceEpoch(d.timestamp())
-            d = QDateTime.fromSecsSinceEpoch(round(d.timestamp()))
-            d.setTimeSpec(Qt.TimeSpec.LocalTime)
-            print(d.toString(Qt.ISODate))
-            option.text = f" {d.toString(Qt.TextDate)}"
-            
-            """transaction = index.data(Qt.ItemDataRole.UserRole + 1).transaction
-            if transaction % 2 == 0:
-                option.backgroundBrush = QBrush(QColor("gray"))"""
-        '''
+        if HEADERS[index.column()] == "package":
+            if not index.data(Qt.ItemDataRole.UserRole + 1).installed:
+                option.font.setItalic(True)
+                color = QPalette().color(QPalette.ColorGroup.Normal, QPalette.ColorRole.Text)
+                color.setAlpha(180)
+                option.palette.setBrush(
+                    QPalette.ColorRole.Text,
+                    color
+                    )
 
         if HEADERS[index.column()] == "action":
             if index.data() == Verbs.WARNING.name.lower():
@@ -69,15 +65,7 @@ class TableDelegate(QStyledItemDelegate):
             pen = QPen(color)
             pen.setWidth(3)
             qr = QRect(option.rect)
-            #print(option.rect)
-            #qr.setWidth(pen.width())
-            #pen.setColor(QColor(f"#EB51{transaction}"))
-            #pen.setColor(QColor(random.randint(0, 255),random.randint(0, 255),random.randint(0, 255),random.randint(100, 255)))
-
             painter.setPen(pen)
-            #painter.drawRect(qr)
-            # QRect(400, 60, 306, 29) x,y, w, h
-
             painter.drawLine(
                 QPoint(qr.x(), qr.y() + 2),
                 QPoint(qr.x(), qr.y() + qr.height()-2)

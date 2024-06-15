@@ -126,7 +126,7 @@ class MainWindow(QMainWindow):
         status.setToolTip("Packages")
         bar.addPermanentWidget(status)
         bar.addPermanentWidget(VLine())
-        status = QLabel(str(self.model.days))
+        status = QLabel(str(self.model.days+1))
         status.setToolTip("Days")
         bar.addPermanentWidget(status)
 

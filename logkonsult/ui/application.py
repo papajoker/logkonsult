@@ -19,6 +19,7 @@ from PySide6.QtCore import (
     Qt,
     QDate,
     QLocale,
+    QModelIndex,
     QProcess,
 )
 from PySide6.QtGui import (
@@ -165,10 +166,10 @@ class MainWindow(QMainWindow):
         self.filter.setCurrentIndex(1)
         self.search.setText("warning")
 
-    def onCurrentIndexChanged(self, index):
+    def onCurrentIndexChanged(self, index: QModelIndex):
         self.statusBar().showMessage(index.data(Qt.ItemDataRole.StatusTipRole))
 
-    def onDoubleClicked(self, index):
+    def onDoubleClicked(self, index: QModelIndex):
         entry = index.data(Qt.ItemDataRole.UserRole + 1)
         print(entry)
         if not os.path.exists("/usr/bin/kate"):

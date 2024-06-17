@@ -2,8 +2,9 @@ from collections import defaultdict
 import datetime
 from enum import Enum
 from pathlib import Path
-
-from PySide6.QtCore import QDate, QDateTime, QLocale
+import shutil
+import sys
+from PySide6.QtCore import QDateTime, QLocale
 
 
 class Verbs(Enum):
@@ -228,6 +229,36 @@ class TimerData:
             pourcent = round(count / self.maxi * 100)
             self.datas[i] = (count, (pourcent // 5 ) * 5 if pourcent < 100 else 100, warm)
 
+
+def prune_log(logfile: str, keep_days=360) -> int:
+    """purge pacman log of old entries"""
+    try:
+        if not shutil.copyfile(logfile, f"{logfile}~"):
+            return 3
+    except PermissionError as err:
+        print(err, file=sys.stderr)
+        return err.errno
+    good = False
+    today = datetime.date.today()
+    with open(f"{logfile}~", 'r') as f_in:
+        with open(f"{logfile}.clean", mode='w') as f_out:    # TODO remove .clean
+            for line in f_in:
+                if "[ALPM-SCRIPTLET]" in line:
+                    continue
+                if good:
+                    f_out.write(line)
+                    continue
+                if not line.startswith("["):
+                    continue
+                try:
+                    line_date = datetime.datetime.strptime(line[1:11], "%Y-%m-%d").date()
+                except ValueError:
+                    continue
+                if (today - line_date).days < keep_days:
+                    good = True
+                    f_out.write(line)
+    print("Not implemented,", "result in temporary file:", f"{logfile}.clean")
+    return 0
 
 
 if __name__ == "__main__":

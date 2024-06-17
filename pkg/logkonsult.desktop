@@ -1,8 +1,10 @@
 [Desktop Entry]
 Type=Application
 Name=logKonsult
+GenericName=pacman logKonsult
 Comment=consult pacman logs
 Exec=/usr/bin/logkonsult-gui
 Icon=/usr/share/pixmaps/logkonsult.svg
 Categories=Utilityty;
 Keywords=pacman;log;
+Terminal=false

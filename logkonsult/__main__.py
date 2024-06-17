@@ -17,7 +17,7 @@ from PySide6.QtCore import (
 from PySide6.QtGui import (
     QIcon,
 )
-from .model.alpm import Parser
+from .model.alpm import Parser, prune_log
 from .model.store import MainModel
 from .ui.application import MainWindow
 
@@ -36,13 +36,22 @@ runner.waitForFinished()
 if not runner.exitCode():
     pkgs = runner.readAllStandardOutput().toStdString().splitlines()
 
+def prune_type(x):
+    x = int(x)
+    if x < 1:
+        raise argparse.ArgumentTypeError("Minimum value is one day")
+    return x
 
 parser = argparse.ArgumentParser(prog='logkonsult-gui')
 parser.add_argument("-d", type=int, default = Parser.max_day, help=f"since ({Parser.max_day}) days", metavar="DAYS")
 parser.add_argument("-f", type=argparse.FileType('r'), default=LOG_FILE, help=f"pacman log ({LOG_FILE})", metavar="LOGFILE")
+parser.add_argument("--prune", type=prune_type, default=360, help="delete old entries, except X days and remove `SCRIPTLET` lines", metavar="KEEPDAYS")
 args =parser.parse_args()
 LOG_FILE = args.f.name
 print(LOG_FILE)
+
+if args.prune:
+    exit(prune_log(LOG_FILE, args.prune))
 
 parser = Parser(LOG_FILE, pkgs)
 args.d -= 1

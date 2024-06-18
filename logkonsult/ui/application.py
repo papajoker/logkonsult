@@ -2,16 +2,13 @@ import os
 from PySide6.QtWidgets import (
     QComboBox,
     QCompleter,
-    QDialogButtonBox,
     QHeaderView,
     QLabel,
     QLineEdit,
     QMainWindow,
     QMessageBox,
-    QSizePolicy,
     QTableView,
     QToolBar,
-    QHBoxLayout,
     QVBoxLayout,
     QWidget,
 )
@@ -38,9 +35,8 @@ class MainWindow(QMainWindow):
         self.log_name = log_name
         self.model = model
         self.setWindowTitle(f"{log_name} ({self.model.get_transactions()})")
-        self.resize(820, 380)
+        self.setMinimumSize(620,420)
         self.statusBar()
-        #self.edits = {}
         self.init_ui()
 
     def init_ui(self):
@@ -101,11 +97,16 @@ class MainWindow(QMainWindow):
             toolbar.addAction(action)
 
         layout.addWidget(self.table)
-        self.calendar = CalendarWidget(TimerData(self.model._data), self.centralWidget())
-        self.calendar.setVisible(False)
+        self.dock = QToolBar("calendar", self)
+        self.dock.setAllowedAreas(Qt.ToolBarArea.BottomToolBarArea)
+        self.dock.setFloatable(False)
+        self.dock.setMovable(False)
+        self.calendar = CalendarWidget(TimerData(self.model._data), self.dock)
         self.calendar.onSelected.connect(self.onCalendarSelect)
         self.calendar.onEnter.connect(self.onCalendarEnter)
-        layout.addWidget(self.calendar)
+        self.dock.setVisible(False)
+        self.dock.addWidget(self.calendar)
+        self.addToolBar(Qt.ToolBarArea.BottomToolBarArea, self.dock)
 
         #self.onSelectWarning()
         msg = QLocale.system().toString(QDate.currentDate(), format=QLocale.FormatType.ShortFormat)
@@ -149,7 +150,7 @@ class MainWindow(QMainWindow):
             self.search.setPlaceholderText(f"{sender.currentText()} entry")
 
     def onToggleCalendar(self, state:bool):
-        self.calendar.setVisible(state)
+        self.dock.setVisible(state)
         self.action_calendar.setToolTip( f"{'hide' if state else 'show'} calendar")
 
     def onCalendarSelect(self, date: QDate, count: int):

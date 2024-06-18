@@ -127,7 +127,9 @@ class Parser:
         warn = None
         transaction_count = 0
         transaction_id = 0
-        for line_id, line in enumerate(log_fh, start=1):
+        line_id = 0
+        for line in log_fh:      # cant use enumerate -> old version : warning on 2..3 lines
+            line_id += 1
             if self.INIT_TRANSACTION in line:
                 transaction_count -= 1
             if "[ALPM]" in line:
@@ -163,7 +165,9 @@ class Parser:
                 if fields["verb"] == Verbs.WARNING:
                     fields["msg"] = fields["msg"][9:]
                     if "directory permissions differ" in fields["msg"]:
-                        #OLD version, msg in next line ! fields["msg"] = fields["msg"] + " " + next(log_fh).rstrip()
+                        if "," not in fields["msg"]:    # OLD version, msg in next line !
+                            fields["msg"] = fields["msg"] + ", " + next(log_fh).rstrip()
+                            line_id += 1
                         fields["msg"] = fields["msg"]
                     if transaction_id != transaction_count:
                         transaction_id += 1

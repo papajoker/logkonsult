@@ -5,6 +5,6 @@ GenericName=pacman logKonsult
 Comment=consult pacman logs
 Exec=/usr/bin/logkonsult-gui
 Icon=/usr/share/pixmaps/logkonsult.svg
-Categories=Utilityty;
+Categories=Utility;
 Keywords=pacman;log;
 Terminal=false

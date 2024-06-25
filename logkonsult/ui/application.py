@@ -34,7 +34,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.log_name = log_name
         self.model = model
-        self.setWindowTitle(f"{log_name} ({self.model.get_transactions()})")
         self.setMinimumSize(620,420)
         self.statusBar()
         self.init_ui()
@@ -116,15 +115,16 @@ class MainWindow(QMainWindow):
 
     def init_status_bar(self):
         count = self.model.get_transactions()
+        self.setWindowTitle(f"{self.log_name} ({count})")
         bar = self.statusBar()
         bar.showMessage(f" {count} transactions")
         bar.addPermanentWidget(VLine())
-        status = QLabel(str(count))
-        status.setToolTip("Transactions")
-        bar.addPermanentWidget(status)
-        bar.addPermanentWidget(VLine())
         status = QLabel(str(self.model.get_pkgs_count()))
         status.setToolTip("Packages")
+        bar.addPermanentWidget(status)
+        bar.addPermanentWidget(VLine())
+        status = QLabel(str(count))
+        status.setToolTip("Transactions")
         bar.addPermanentWidget(status)
         bar.addPermanentWidget(VLine())
         status = QLabel(str(self.model.days+1))

@@ -1,6 +1,6 @@
 pkgname=logkonsult-git
 _pkgname="${pkgname%-*}"
-pkgver=r35.7590257.20240618
+pkgver=r36.6684d86.20240619
 pkgrel=1
 arch=("x86_64")
 pkgdesc="pacman logs Qt6 gui"

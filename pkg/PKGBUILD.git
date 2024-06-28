@@ -1,6 +1,6 @@
 pkgname=logkonsult-git
 _pkgname="${pkgname%-*}"
-pkgver=r36.6684d86.20240619
+pkgver=0.0.5.r32.g4e7daa7
 pkgrel=1
 arch=("x86_64")
 pkgdesc="pacman logs Qt6 gui"
@@ -26,7 +26,7 @@ sha256sums=('SKIP')
 
 pkgver() {
   cd "$_pkgname"
-  printf "r%s.%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)" "$(date +%Y%m%d)"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
 }
 # makepkg -fsi -p PKGBUILD.git
 

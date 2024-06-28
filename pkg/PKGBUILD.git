@@ -2,7 +2,7 @@ pkgname=logkonsult-git
 _pkgname="${pkgname%-*}"
 pkgver=0.0.5.r32.g4e7daa7
 pkgrel=1
-arch=("x86_64")
+arch=("any")
 pkgdesc="pacman logs Qt6 gui"
 url="https://github.com/papajoker/logkonsult"
 

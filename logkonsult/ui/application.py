@@ -97,7 +97,7 @@ class MainWindow(QMainWindow):
             toolbar.addAction(self.action_calendar)
             action = QAction(QIcon.fromTheme("exit"), self.tr("Exit"), self)
             if not action.icon():
-                action.setIconText("⛌")
+                action.setIconText("X")
             action.triggered.connect(self.close)
             toolbar.addAction(action)
 

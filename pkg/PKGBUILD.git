@@ -40,7 +40,6 @@ build() {
 package() {
   cd "$_pkgname"
   python -m installer --destdir="$pkgdir" dist/*.whl
-  mkdir -p "$pkgdir/usr/share/applications"
   mkdir -p "$pkgdir/usr/share/pixmaps"
   install -Dm644 pkg/logkonsult.desktop "$pkgdir"/usr/share/applications/
   local py_version=$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')

@@ -21,7 +21,6 @@ makedepends=(
 
 conflicts=("$_pkgname")
 provides=("$_pkgname")
-replaces=("$_pkgname")
 
 #source=("${pkgname}-${pkgver}-${pkgrel}.tar.gz::https://github.com/papajoker/logkonsult/archive/refs/tags/v${pkgver}.tar.gz")
 source=("$_pkgname::git+${url}#branch=main")

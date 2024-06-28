@@ -7,6 +7,7 @@ pkgdesc="pacman logs Qt6 gui"
 url="https://github.com/papajoker/logkonsult"
 
 depends=(
+  hicolor-icon-theme
   python
   pyside6
 )

@@ -8,3 +8,4 @@ Icon=logkonsult
 Categories=Utility;
 Keywords=pacman;log;
 Terminal=false
+StartupWMClass=logkonsult-gui

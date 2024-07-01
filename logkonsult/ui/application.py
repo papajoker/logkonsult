@@ -184,6 +184,7 @@ class MainWindow(QMainWindow):
         bin_dir = "/usr/bin/"
         editors = {
             f"{bin_dir}kate": "{0} --line {1}",
+            f"{bin_dir}geany": "{0} --line {1}",
             f"{bin_dir}gedit": "{0} +{1}",
             f"{bin_dir}gnome-text-editor": "{0} +{1}",
             f"{bin_dir}mousepad": "{0} -l {1}",

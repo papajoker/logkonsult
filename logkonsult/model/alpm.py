@@ -104,6 +104,14 @@ class PaclogWarn(Paclog):
                 pass
         self.message = msg
 
+    def get_file(self) -> str:
+        """ file in warning message"""
+        if self.is_pacnew():
+            return self.message.split()[0]
+        elif "permissions differ" in self.message:
+            return self.message.split()[-5].removesuffix(",")
+        return ""
+
     def is_fixed(self):
         return self.message.startswith("FIXED")
 

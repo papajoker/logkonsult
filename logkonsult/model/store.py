@@ -6,6 +6,7 @@ from PySide6.QtCore import (
     QDateTime,
     QLocale,
     QModelIndex,
+    QProcess,
     QSortFilterProxyModel,
 )
 from PySide6.QtGui import (
@@ -25,6 +26,16 @@ class MainModel(QAbstractTableModel):
     def __init__(self, data: list[Paclog], days: int):
         super().__init__()
         self._data = data
+        # some entries in log not have package field
+        runner = QProcess()
+        for item in (l for l in self._data if isinstance(l, PaclogWarn) and not l.package):
+            file_ = item.get_file()
+            if not file_: continue
+            runner.startCommand(f"/usr/bin/pacman -Qoq {file_}")
+            runner.waitForFinished()
+            if not runner.exitCode():
+                if pkg := runner.readAllStandardOutput().toStdString():
+                    item.package = pkg
         self.days = days
         _colors_generate(self._data)
 

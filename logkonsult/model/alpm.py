@@ -72,9 +72,8 @@ class Paclog:
             return self.datelog > other.datelog
         return self.transaction > other.transaction
 
-
     def get_ico(self) -> str:
-        """ action ti icon """
+        """ action to icon """
         return ICO_ACTIONS[self.action.value]
 
     def __str__(self):
@@ -104,6 +103,16 @@ class PaclogWarn(Paclog):
             except PermissionError:
                 pass
         self.message = msg
+
+    def is_fixed(self):
+        return self.message.startswith("FIXED")
+
+    def is_pacnew(self):
+        return self.message.endswith(".pacnew")
+
+    def get_ico(self) -> str:
+        """ action to icon """
+        return super().get_ico() if not self.is_fixed() else "!"
 
     def __str__(self):
         return f"[{self.date}] {self.action.name:12} : {self.package:28} -> {self.message}"

@@ -24,8 +24,9 @@ from PySide6.QtGui import (
     QIcon,
 )
 from ..model.delegates import TableDelegate
-from ..model.alpm import HEADERS, TimerData
+from ..model.alpm import HEADERS, TimerData, PaclogWarn
 from ..model.store import MainModel, ToolProxyModel, MainProxyModel
+from ..model.pacnew import worker as pacnew_worker
 from .widgets import VLine, CalendarWidget
 
 
@@ -180,6 +181,11 @@ class MainWindow(QMainWindow):
         """load logfile in editor at line X"""
         entry = index.data(Qt.ItemDataRole.UserRole + 1)
         print(entry)
+
+        if pacnew_worker :
+            if isinstance(entry, PaclogWarn) and entry.is_pacnew() and not entry.is_fixed():
+                pacnew_worker.run(entry.package, entry.message)
+                return
 
         bin_dir = "/usr/bin/"
         editors = {

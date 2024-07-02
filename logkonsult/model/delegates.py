@@ -50,7 +50,7 @@ class TableDelegate(QStyledItemDelegate):
                     )
 
         if HEADERS[index.column()] == "action":
-            if index.data() == Verbs.WARNING.name.lower():
+            if index.data() == Verbs.WARNING.name.lower() and not index.data(Qt.ItemDataRole.UserRole +1).is_fixed():
                 option.palette.setBrush(QPalette.Text, self.WARN_COLOR)
             option.displayAlignment = option.displayAlignment | Qt.AlignCenter
             option.text = index.data(Qt.ItemDataRole.UserRole)

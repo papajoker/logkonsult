@@ -33,6 +33,9 @@ def format_exec(exec) -> str:
         exec = bin_dir + exec
     return exec
 
+editor = None
+worker = None
+
 conf_file = Path(f"~/.config/{APP_NAME.split('-', maxsplit=1)[0]}.conf").expanduser()
 print("#read config file", conf_file)
 if conf_file.exists():

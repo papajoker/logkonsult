@@ -18,6 +18,7 @@ _editors = {
     f"{bin_dir}mousepad": "{0} -l {1}",
     f"{bin_dir}pluma": "{0} +{1}",
     f"{bin_dir}code": "-g {0}:{1}",
+    f"{bin_dir}zeditor": "{0}:{1}",
 }
 
 _workers = {

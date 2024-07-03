@@ -66,10 +66,12 @@ class MainWindow(QMainWindow):
 
         if toolbar := self.addToolBar("tools"):
 
+            is_xfce = "xfce" in os.environ.get("XDG_CURRENT_DESKTOP").lower()
+
             toolbar.setFloatable(False)
             action = QAction(QIcon.fromTheme("warning"), "Warnings", self)
             action.triggered.connect(self.onSelectWarning)
-            if not action.icon():
+            if not action.icon() and not is_xfce:
                 action.setIconText("⚠")
             toolbar.addAction(action)
             self.filter = QComboBox()
@@ -92,7 +94,7 @@ class MainWindow(QMainWindow):
 
             toolbar.addSeparator()
             self.action_calendar = QAction(QIcon.fromTheme("calendar"), "Calendar", self)
-            if not self.action_calendar.icon():
+            if not self.action_calendar.icon() and not is_xfce:
                 self.action_calendar.setIconText("📅")
             self.action_calendar.setCheckable(True)
             self.action_calendar.toggled.connect(self.onToggleCalendar)

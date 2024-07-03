@@ -29,7 +29,8 @@ optdepends=('diffuse: editor, compare merge files'
         'gnome-text-editor: A simple text editor for the GNOME desktop'
         'kate: kde Advanced text editor'
         'pluma: A powerful text editor for MATE'
-        'mousepad: Simple text editor for Xfce')
+        'mousepad: Simple text editor for Xfce'
+        'zed: A high-performance, multiplayer code editor')
 
 conflicts=("$_pkgname")
 provides=("$_pkgname")

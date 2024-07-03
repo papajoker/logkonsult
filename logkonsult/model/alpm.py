@@ -134,9 +134,9 @@ class Parser:
     goods = Verbs.values()
     INIT_TRANSACTION = "[PACMAN] Running"
 
-    def __init__(self, lfile, pkgs: list):
+    def __init__(self, lfile, pkgs: list|None):
         self.logfile = lfile
-        self.pkgs = pkgs
+        self.pkgs = pkgs if pkgs else []
 
     def generate_dicts(self, log_fh):
         """parse logs"""

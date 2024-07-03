@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import argparse
+
 from pathlib import Path
 import sys
 try:
@@ -19,6 +19,7 @@ from PySide6.QtGui import (
 )
 from .model.alpm import Parser, prune_log
 from .model.store import MainModel
+from .model.config import read_conf
 from .ui.application import MainWindow
 
 
@@ -36,27 +37,20 @@ runner.waitForFinished()
 if not runner.exitCode():
     pkgs = runner.readAllStandardOutput().toStdString().splitlines()
 
-def prune_type(x):
-    x = int(x)
-    if x < 1:
-        raise argparse.ArgumentTypeError("Minimum value is one day")
-    return x
+conf = read_conf(
+    sys.argv[1:],
+    LOG_FILE
+)
 
-parser = argparse.ArgumentParser(prog='logkonsult-gui')
-parser.add_argument("-d", type=int, default = Parser.max_day, help=f"since ({Parser.max_day}) days", metavar="DAYS")
-parser.add_argument("-f", type=argparse.FileType('r'), default=LOG_FILE, help=f"pacman log ({LOG_FILE})", metavar="LOGFILE")
-parser.add_argument("--prune", type=prune_type, help="delete old entries, except X days and remove `SCRIPTLET` lines", metavar="KEEPDAYS")
-args =parser.parse_args()
-# print(args)
-LOG_FILE = args.f.name
+LOG_FILE = conf.f.name
 print(LOG_FILE)
 
-if args.prune:
-    exit(prune_log(LOG_FILE, args.prune))
+if conf.prune:
+    exit(prune_log(LOG_FILE, conf.prune))
 
 parser = Parser(LOG_FILE, pkgs)
-args.d -= 1
-parser.max_day = args.d if args.d > 0 else 0
+conf.d -= 1
+parser.max_day = conf.d if conf.d > 0 else 0
 
 items = [*parser.load()]
 if not items:
@@ -67,7 +61,12 @@ print(len(items))
 class ApplicationQt(QApplication):
     def __init__(self, args, datas: list, days):
         super().__init__(args)
-        self.window = MainWindow(MainModel(datas, days), log_name=LOG_FILE)
+        self.window = MainWindow(
+            MainModel(datas, days),
+            log_name=LOG_FILE,
+            editor= conf.e,
+            editor_pacnew = conf.diff
+        )
         self.setWindowIcon(QIcon(str(Path(__file__).parent / "assets/logkonsult.svg")))
 
         locale = QLocale()
@@ -79,6 +78,4 @@ class ApplicationQt(QApplication):
 appli = ApplicationQt(sys.argv, datas=items, days=parser.max_day)
 appli.window.show()
 code = appli.exec()
-if code:
-    print(code)
 exit(code)

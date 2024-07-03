@@ -22,16 +22,6 @@ class Dep(Enum):
         return os.path.exists(self.value)
 
 
-bin_dir = "/usr/bin/"
-_workers = [
-    (f"{bin_dir}meld", Dep.GVFS),
-    (f"{bin_dir}diffuse", Dep.GVFS),
-    (f"{bin_dir}kompare", Dep.NONE),    # bad : qt5 and admin ptotocol   
-    (f"{bin_dir}code", Dep.NONE, "-d"),    # read only
-    # (f"{bin_dir}kate", Dep.KIO),   # test for Dep.KIO
-]
-
-
 class Worker:
     def __init__(self, name: str, dep=Dep.GVFS, option: str|None=""):
         self.exec = name
@@ -40,8 +30,8 @@ class Worker:
 
     def available(self) -> bool:
         return os.path.exists(self.exec)
-    
-    def run(self, pkg: str, msg: str):
+
+    def run(self, msg: str):
         """
         msg = /etc/pacman.conf installed as /etc/pacman.conf.pacnew
         """
@@ -59,13 +49,5 @@ class Worker:
         print("run:", self.exec, arguments)
         QProcess().startDetached(self.exec, arguments)
 
-#TODO for select diff-editor: use script arg and/or ~/.logkonsult.conf
-# same for editor
-
-
-try:
-    worker = next(w for w in _workers if os.path.exists(w[0])) # and w[1].installed())
-    worker = Worker(*worker)
-    print("worker =", worker.exec)
-except StopIteration:
-    worker = None
+    def __repr__(self) ->str:
+        return f"pacnew.Worker({self.exec})"

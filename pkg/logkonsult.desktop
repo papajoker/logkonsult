@@ -6,6 +6,6 @@ Comment=consult pacman logs
 Exec=logkonsult-gui
 Icon=logkonsult
 Categories=Utility;
-Keywords=pacman;log;
+Keywords=pacman;log;pacnew;
 Terminal=false
 StartupWMClass=logkonsult-gui

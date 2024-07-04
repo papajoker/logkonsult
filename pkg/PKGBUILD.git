@@ -1,6 +1,6 @@
 pkgname=logkonsult-git
 _pkgname="${pkgname%-*}"
-pkgver=r55.4e85647
+pkgver=r57.1148de0
 pkgrel=1
 arch=("any")
 pkgdesc="pacman logs Qt6 gui"
@@ -35,7 +35,7 @@ optdepends=('diffuse: editor, compare merge files'
 
 conflicts=("$_pkgname")
 provides=("$_pkgname")
-
+install=.install
 #source=("${pkgname}-${pkgver}-${pkgrel}.tar.gz::https://github.com/papajoker/logkonsult/archive/refs/tags/v${pkgver}.tar.gz")
 source=("$_pkgname::git+${url}#branch=main")
 sha256sums=('SKIP')

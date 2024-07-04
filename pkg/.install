@@ -1,0 +1,8 @@
+post_install() {
+  echo -e "we can use a config file in ~/.config/logkonsult.conf"
+}
+
+post_remove() {
+  echo "For a clean home, you can"
+  echo 'remove ~/.config/logkonsult.conf if exists'
+}

@@ -70,9 +70,10 @@ class MainWindow(QMainWindow):
 
             toolbar.setFloatable(False)
             action = QAction(QIcon.fromTheme("warning"), "Warnings", self)
-            action.triggered.connect(self.onSelectWarning)
+            if not action.icon(): action.setIcon(QIcon.fromTheme("dialog-warning"))
             if not action.icon() and not is_xfce:
                 action.setIconText("⚠")
+            action.triggered.connect(self.onSelectWarning)
             toolbar.addAction(action)
             self.filter = QComboBox()
             self.filter.addItems(self.model.get_headers())
@@ -94,12 +95,14 @@ class MainWindow(QMainWindow):
 
             toolbar.addSeparator()
             self.action_calendar = QAction(QIcon.fromTheme("calendar"), "Calendar", self)
+            if not action.icon(): action.setIcon(QIcon.fromTheme("x-office-calendar"))
             if not self.action_calendar.icon() and not is_xfce:
                 self.action_calendar.setIconText("📅")
             self.action_calendar.setCheckable(True)
             self.action_calendar.toggled.connect(self.onToggleCalendar)
             toolbar.addAction(self.action_calendar)
             action = QAction(QIcon.fromTheme("exit"), self.tr("Exit"), self)
+            if not action.icon(): action.setIcon(QIcon.fromTheme("application-exit"))
             if not action.icon():
                 action.setIconText("X")
             action.triggered.connect(self.close)

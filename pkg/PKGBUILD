@@ -1,6 +1,6 @@
 pkgname=logkonsult
 pkgver=0.9.0
-pkgrel=1
+pkgrel=2
 arch=("any")
 pkgdesc="pacman logs Qt6 gui"
 url="https://github.com/papajoker/logkonsult"
@@ -33,20 +33,20 @@ optdepends=('diffuse: editor, compare merge files'
         'zed: A high-performance, multiplayer code editor')
 
 conflicts=("${pkgname}-git")
-provides=("$_pkgname")
+provides=("$pkgname")
 install=.install
 
 source=("${pkgname}-${pkgver}-${pkgrel}.tar.gz::https://github.com/papajoker/logkonsult/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('e0738a7fdfedb64fd883d1b3556ee4f934288384141d365ebe02232501895786')
+sha256sums=('04b15e93ed291521d2157c8c955cd3b4c93d7dc4064e679d7dcd1f7bcd65814c')
 # makepkg -fsi --skipchecksums
 
 build() {
-  cd "$pkgname-$pkgver-$pkgrel"
+  cd "$pkgname-$pkgver"
   python -m build --wheel --no-isolation
 }
 
 package() {
-  cd "$pkgname-$pkgver-$pkgrel"
+  cd "$pkgname-$pkgver"
   python -m installer --destdir="$pkgdir" dist/*.whl
   mkdir -p "$pkgdir/usr/share/applications"
   install -d "$pkgdir/usr/share/icons/hicolor/scalable/apps"

@@ -23,7 +23,7 @@ _editors = {
 
 _workers = {
     f"{bin_dir}meld": (Dep.GVFS, None),
-    f"{bin_dir}diffuse": (Dep.GVFS, None),
+    f"{bin_dir}diffuse": (Dep.NONE, None),
     f"{bin_dir}kompare": ( Dep.NONE, None),    # bad : qt5 and admin ptotocol
     f"{bin_dir}code": (Dep.NONE, "-d"),    # read only
     f"{bin_dir}kate": (Dep.NONE, None),   # test for Dep.KIO BUT not usefull to use kio_admin

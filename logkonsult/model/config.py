@@ -98,12 +98,12 @@ def read_conf(args_script, log_file: str):
     args.e = format_exec(args.e)
     try:
         args.e = (args.e,_editors[args.e])
-    except KeyError:
+    except (KeyError, AttributeError):
         args.e = None
 
     try:
         args.diff =  Worker(args.diff, *_workers[args.diff])
-    except KeyError:
+    except (KeyError, AttributeError):
         args.diff = None
 
     # print(args)

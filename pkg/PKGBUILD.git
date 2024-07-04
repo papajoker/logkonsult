@@ -21,6 +21,7 @@ makedepends=(
 optdepends=('diffuse: editor, compare merge files'
         'kompare: editor, compare merge files'
         'meld: editor, compare merge files'
+        'tkdiff: a graphical front end to the diff program'
         'gvfs: Virtual filesystem implementation for GIO'
         'kio-admin: Manage files as administrator using the admin:// KIO protocol'
         'code: Visual Studio Code'

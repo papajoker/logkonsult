@@ -12,7 +12,7 @@ max_day = 120
 bin_dir = "/usr/bin/"
 _editors = {
     f"{bin_dir}kate": "{0} --line {1}",
-    f"{bin_dir}geany": "{0} --line {1}",
+    f"{bin_dir}geany": "-s {0} --line {1}",
     f"{bin_dir}gedit": "{0} +{1}",
     f"{bin_dir}gnome-text-editor": "{0} +{1}",
     f"{bin_dir}mousepad": "{0} -l {1}",
@@ -27,6 +27,7 @@ _workers = {
     f"{bin_dir}kompare": ( Dep.NONE, None),    # bad : qt5 and admin ptotocol
     f"{bin_dir}code": (Dep.NONE, "-d"),    # read only
     f"{bin_dir}kate": (Dep.NONE, None),   # test for Dep.KIO BUT not usefull to use kio_admin
+    f"{bin_dir}tkdiff": (Dep.NONE, None),
 }
 
 def format_exec(exec) -> str:

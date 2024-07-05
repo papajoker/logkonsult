@@ -3,7 +3,7 @@ requires-python = ">=3.12"
 name = "logKonsult"
 dynamic = ["version"]
 authors = [
-  {name = "papajoker"}
+  {name = "papajoke"}
 ]
 description = "pacman logs consult Qt gui"
 dependencies = [
@@ -21,7 +21,7 @@ logkonsult-gui = "logkonsult:__main__"
 
 
 [build-system]
-requires = ["setuptools >= 69.0"]
+requires = ["setuptools >= 69.0", "setuptools-git-versioning"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
@@ -38,9 +38,10 @@ namespaces = false
 [tool.setuptools.package-data]
 "logkonsult.assets" = ["*.svg"]
 
-#python -m build --wheel --no-isolation
-#python -m installer --destdir="$pkgdir" dist/*.whl
-
+[tool.setuptools-git-versioning]
+enabled = true
+dev_template = "{tag}+{ccount}.g{sha}"
+dirty_template = "{tag}+{ccount}.g{sha}.dev"
 
 
 [tool.black]

@@ -3,6 +3,7 @@ from .pacnew import Dep, Worker
 from pathlib import Path
 import os
 import tomllib
+from .. import __version__
 
 #TODO use also ~/.config/logkonsult.conf for editor and diff
 
@@ -39,7 +40,7 @@ editor = None
 worker = None
 
 conf_file = Path(f"~/.config/{APP_NAME.split('-', maxsplit=1)[0]}.conf").expanduser()
-print("#read config file", conf_file)
+print("#read config file", conf_file, "\n")
 if conf_file.exists():
     with open(conf_file, "rb") as f:
         data = tomllib.load(f)
@@ -86,7 +87,7 @@ def diff_type(diff):
 
 def read_conf(args_script, log_file: str):
 
-    parser = argparse.ArgumentParser(prog=APP_NAME)
+    parser = argparse.ArgumentParser(prog=APP_NAME, epilog = f"Version: {__version__}")
     parser.add_argument("-d", type=int, default = max_day, help=f"since ({max_day}) days", metavar="DAYS")
     parser.add_argument("-f", type=argparse.FileType('r'), default=log_file, help=f"pacman log ({log_file})", metavar="LOGFILE")
     if editor:

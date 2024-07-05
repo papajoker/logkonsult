@@ -157,7 +157,6 @@ class CalendarWidget(QCalendarWidget):
 
     def onClick(self, date):
         count = self.dates.datas.get(date)[0]
-        print(self.dates.datas.get(date))
         self.onSelected.emit(date, count)
 
     def onDoubleClicked(self, date):

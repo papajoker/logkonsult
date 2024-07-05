@@ -155,6 +155,7 @@ class MainWindow(QMainWindow):
             self.table.model().setFilterByColumn(text, col)
 
     def onFiltrerChange(self, index):
+        self.table.setColumnHidden(3, False)
         if isinstance(self.search.completer().model(), ToolProxyModel):
             self.search.completer().model().column = index
             if isinstance(self.table.model(), MainProxyModel):
@@ -181,6 +182,7 @@ class MainWindow(QMainWindow):
 
     def onSelectWarning(self):
         self.filter.setCurrentIndex(1)
+        self.table.setColumnHidden(3, True)
         self.search.setText("warning")
 
     def onCurrentIndexChanged(self, index: QModelIndex):

@@ -1,6 +1,6 @@
 pkgname=logkonsult-git
 _pkgname="${pkgname%-*}"
-pkgver=r63.7011085
+pkgver=r64.cf4582c
 pkgrel=1
 arch=("any")
 pkgdesc="pacman logs Qt6 gui"
@@ -16,6 +16,7 @@ makedepends=(
   python-build
   python-installer
   python-setuptools
+  python-setuptools-git-versioning
   python-wheel
 )
 optdepends=('diffuse: editor, compare merge files'
